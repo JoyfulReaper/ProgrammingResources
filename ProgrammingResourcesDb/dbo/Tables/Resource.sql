@@ -1,4 +1,8 @@
 ﻿CREATE TABLE [dbo].[Resource]
 (
-	[ResourceId] INT NOT NULL PRIMARY KEY
+	[ResourceId] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [Title] NVARCHAR(100) NOT NULL, 
+    [Url] NVARCHAR(500) NOT NULL, 
+    [Description] NVARCHAR(1000) NULL, 
+    [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE()
 )
