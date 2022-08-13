@@ -1,0 +1,4 @@
+﻿CREATE TABLE [dbo].[Tag]
+(
+	[TagId] INT NOT NULL PRIMARY KEY
+)
