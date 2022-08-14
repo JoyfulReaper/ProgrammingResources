@@ -14,7 +14,7 @@ public class EndPoint
     {
         if(obj is null)
         {
-            throw new Exception($"API returned a null value, in a method where null values are not allowed.");
+            throw new Exception($"API returned a null value to a method where null values are not allowed.");
         }
     }
 }
