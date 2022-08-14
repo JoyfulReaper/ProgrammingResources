@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgrammingResourcesApi", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgrammingResourcesLibrary", "ProgrammingResourcesLibrary\ProgrammingResourcesLibrary.csproj", "{693E12FA-8C98-4FAF-B3AE-FF86459D5176}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgrammingResourcesApiClient", "ProgrammingResourcesApiClient\ProgrammingResourcesApiClient.csproj", "{7E26F412-9FD0-44A0-94A3-23EF682BB763}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{693E12FA-8C98-4FAF-B3AE-FF86459D5176}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{693E12FA-8C98-4FAF-B3AE-FF86459D5176}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{693E12FA-8C98-4FAF-B3AE-FF86459D5176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E26F412-9FD0-44A0-94A3-23EF682BB763}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E26F412-9FD0-44A0-94A3-23EF682BB763}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E26F412-9FD0-44A0-94A3-23EF682BB763}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E26F412-9FD0-44A0-94A3-23EF682BB763}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
