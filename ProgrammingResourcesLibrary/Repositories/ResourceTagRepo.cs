@@ -12,6 +12,12 @@ public class ResourceTagRepo : IResourceTagRepo
         _dataAccess = dataAccess;
     }
 
+    public async Task<IEnumerable<Resource>> GetTagged(int tagId)
+    {
+        var output = await _dataAccess.LoadDataAsync<Resource, dynamic>("spResource_GetResourceByTag", new { tagId }, "ProgrammingResources");
+        return output;
+    }
+
     public async Task<IEnumerable<ResourceTag>> GetAll()
     {
         var output = await _dataAccess.LoadDataAsync<ResourceTag, dynamic>("spResourceTag_GetAll", new { }, "ProgrammingResources");
@@ -34,5 +40,10 @@ public class ResourceTagRepo : IResourceTagRepo
         }, "ProgrammingResources");
 
         resourceTag.ResourceTagId = id;
+    }
+
+    public async Task Delete(int resourceTagId)
+    {
+        await _dataAccess.ExecuteRawSql("DELETE FROM ResourceTag WHERE ResourceTagId = @ResourceTagId", new { resourceTagId }, "ProgrammingResouces");
     }
 }
