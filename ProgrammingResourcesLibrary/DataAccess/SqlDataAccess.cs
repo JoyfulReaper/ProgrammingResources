@@ -25,15 +25,14 @@ public class SqlDataAccess : IDataAccess, IDisposable
         return _config.GetConnectionString(name);
     }
 
-    public async Task<List<T>> LoadDataAsync<T, U>(string storedProcedure, U parameters, string connectionStringName)
+    public async Task<IEnumerable<T>> LoadDataAsync<T, U>(string storedProcedure, U parameters, string connectionStringName)
     {
         string connectionString = GetConnectionString(connectionStringName);
 
         using (IDbConnection connection = new SqlConnection(connectionString))
         {
-            List<T> rows = (await connection.QueryAsync<T>(storedProcedure, parameters,
-                commandType: CommandType.StoredProcedure))
-                .ToList();
+            IEnumerable<T> rows = (await connection.QueryAsync<T>(storedProcedure, parameters,
+                commandType: CommandType.StoredProcedure));
 
             return rows;
         }
@@ -69,11 +68,10 @@ public class SqlDataAccess : IDataAccess, IDisposable
             commandType: CommandType.StoredProcedure, transaction: _transaction);
     }
 
-    public async  Task<List<T>> LoadDataInTransactionAsync<T, U>(string storedProcedure, U parameters)
+    public async  Task<IEnumerable<T>> LoadDataInTransactionAsync<T, U>(string storedProcedure, U parameters)
     {
-        List<T> rows = (await _connection.QueryAsync<T>(storedProcedure, parameters,
-            commandType: CommandType.StoredProcedure, transaction: _transaction))
-            .ToList();
+        IEnumerable<T> rows = (await _connection.QueryAsync<T>(storedProcedure, parameters,
+            commandType: CommandType.StoredProcedure, transaction: _transaction));
 
         return rows;
     }
@@ -122,14 +120,13 @@ public class SqlDataAccess : IDataAccess, IDisposable
         _connection = null;
     }
 
-    public async Task<List<T>> QueryRawSql<T, U>(string sql, U parameters, string connectionStringName)
+    public async Task<IEnumerable<T>> QueryRawSql<T, U>(string sql, U parameters, string connectionStringName)
     {
         string connectionString = GetConnectionString(connectionStringName);
         using IDbConnection connection = new SqlConnection(connectionString);
 
         return (await connection.QueryAsync<T>(sql, parameters,
-            commandType: CommandType.Text))
-            .ToList();
+            commandType: CommandType.Text));
     }
 
     public async Task ExecuteRawSql<T>(string sql, T parameters, string connectionStringName)

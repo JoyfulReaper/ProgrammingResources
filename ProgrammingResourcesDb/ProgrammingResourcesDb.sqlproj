@@ -59,13 +59,26 @@
     <Folder Include="dbo" />
     <Folder Include="dbo\Tables" />
     <Folder Include="dbo\Stored Procedures" />
+    <Folder Include="Publish Profiles" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Resource.sql" />
     <Build Include="dbo\Tables\ResourceTag.sql" />
     <Build Include="dbo\Tables\Tag.sql" />
+    <Build Include="dbo\Stored Procedures\spResource_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\spResource_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spResource_Save.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_Save.sql" />
+    <Build Include="dbo\Stored Procedures\spResourceTag_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spResourceTag_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\spResourceTag_Save.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResourcesDb.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Publish Profiles\ProgrammingResourcesDb.publish.xml" />
   </ItemGroup>
 </Project>
