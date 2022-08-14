@@ -24,17 +24,19 @@ BEGIN TRANSACTION;
 	  );
  
 	IF @@ROWCOUNT = 0
-	BEGIN
-	  UPDATE dbo.[Resource]
-		SET
-			[Title] = @Title,
-			[Url] = @Url,
-			[Description] = @Description
-		WHERE
-			[ResourceId] = @ResourceId;
-			
-		SET @ResourceId = SCOPE_IDENTITY();
-	END
+		BEGIN
+		  UPDATE dbo.[Resource]
+			SET
+				[Title] = @Title,
+				[Url] = @Url,
+				[Description] = @Description
+			WHERE
+				[ResourceId] = @ResourceId;
+		END
+		ELSE
+			BEGIN
+				SET @ResourceId = SCOPE_IDENTITY();
+			END
  
 COMMIT TRANSACTION;
 

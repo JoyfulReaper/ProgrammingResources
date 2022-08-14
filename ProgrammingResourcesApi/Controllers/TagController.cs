@@ -46,7 +46,7 @@ public class TagController : ControllerBase
             return BadRequest();
         }
 
-        return savedTag;
+        return CreatedAtAction(nameof(Get), new { id = savedTag.TagId }, savedTag);
     }
 
 }

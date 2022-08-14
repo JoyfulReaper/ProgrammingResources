@@ -53,7 +53,7 @@ public class ResourceTagController : ControllerBase
             return BadRequest();
         }
 
-        return savedRt;
+        return CreatedAtAction(nameof(Get), new { savedRt.ResourceTagId }, savedRt);
     }
 
     // DELETE api/<ResourceTagController>/5

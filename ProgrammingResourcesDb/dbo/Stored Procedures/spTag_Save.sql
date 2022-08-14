@@ -18,15 +18,17 @@ BEGIN TRANSACTION;
 	  );
  
 	IF @@ROWCOUNT = 0
-	BEGIN
-	  UPDATE dbo.Tag
-		SET
-			[Name] = @Name
-		WHERE
-			[TagId] = @TagId;
-			
-		SET @TagId = SCOPE_IDENTITY();
-	END
+		BEGIN
+		  UPDATE dbo.Tag
+			SET
+				[Name] = @Name
+			WHERE
+				[TagId] = @TagId;
+		END
+	ELSE
+		BEGIN
+			SET @TagId = SCOPE_IDENTITY();
+		END
  
 COMMIT TRANSACTION;
 

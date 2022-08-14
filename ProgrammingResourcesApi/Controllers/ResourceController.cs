@@ -43,15 +43,17 @@ public class ResourceController : ControllerBase
 
     // POST api/<ResourceController>
     [HttpPost]
-    public async Task<ActionResult<ResourceDto>> Post([FromBody] ResourceDto resource)
+    public async Task<ActionResult<ResourceDto>> Post([FromBody] ResourceDto resourceCreateDto)
     {
-        await _resourceRepo.Save(_mapper.Map<Resource>(resource));
+        var resource = _mapper.Map<Resource>(resourceCreateDto);
+        await _resourceRepo.Save(resource);
         var savedResource = await _resourceRepo.Get(resource.ResourceId);
         if(savedResource == null)
         {
             return BadRequest();
         }
-        return _mapper.Map<ResourceDto>(savedResource);
+        var output = _mapper.Map<ResourceDto>(savedResource);
+        return CreatedAtAction(nameof(Get), new { id = output.ResourceId }, output);
     }
 
     // PUT api/<ResourceController>/5
