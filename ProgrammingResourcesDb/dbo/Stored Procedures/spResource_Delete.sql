@@ -4,7 +4,7 @@ AS
 BEGIN
 	UPDATE [Resource]
 	SET
-		DateDeleted = UTCDATE()
+		DateDeleted = GETUTCDATE()
 	WHERE
 		ResourceId = @ResourceId;
 END

@@ -1,6 +1,8 @@
 using ProgrammingResourceLibrary.DataAccess;
 using ProgrammingResourcesLibrary.Repositories;
 using ProgrammingResourcesLibrary.Repositories.Interfaces;
+using AutoMapper;
+using ProgrammingResourcesApi.DTOs;
 
 namespace ProgrammingResourcesApi;
 
@@ -18,9 +20,11 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddScoped<IDataAccess, SqlDataAccess>();
-        builder.Services.AddScoped<IResourceRepo, IResourceRepo>();
-        builder.Services.AddScoped<ITagRepo, ITagRepo>();
+        builder.Services.AddScoped<IResourceRepo, ResourceRepo>();
+        builder.Services.AddScoped<ITagRepo, TagRepo>();
         builder.Services.AddScoped<IResourceTagRepo, ResourceTagRepo>();
+
+        builder.Services.AddAutoMapper(typeof(ResourceDto));
 
         var app = builder.Build();
 
