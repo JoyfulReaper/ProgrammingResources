@@ -1,9 +1,9 @@
 ﻿using ProgrammingResourceLibrary.DataAccess;
 using ProgrammingResourcesLibrary.Models;
-
+using ProgrammingResourcesLibrary.Repositories.Interfaces;
 
 namespace ProgrammingResourcesLibrary.Repositories;
-public class ResourceRepo
+public class ResourceRepo : IResourceRepo
 {
     private readonly IDataAccess _dataAccess;
 
@@ -35,5 +35,10 @@ public class ResourceRepo
         }, "ProgrammingResources");
 
         resource.ResourceId = id;
+    }
+
+    public async Task Delete(int resourceId)
+    {
+        await _dataAccess.SaveDataAsync<dynamic>("spResource_Delete", new { resourceId }, "ProgrammingResources");
     }
 }

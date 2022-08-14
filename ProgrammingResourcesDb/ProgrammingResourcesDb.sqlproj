@@ -74,6 +74,7 @@
     <Build Include="dbo\Stored Procedures\spResourceTag_Get.sql" />
     <Build Include="dbo\Stored Procedures\spResourceTag_GetAll.sql" />
     <Build Include="dbo\Stored Procedures\spResourceTag_Save.sql" />
+    <Build Include="dbo\Stored Procedures\spResource_Delete.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResourcesDb.refactorlog" />

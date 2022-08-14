@@ -1,16 +1,16 @@
 ﻿using ProgrammingResourceLibrary.DataAccess;
 using ProgrammingResourcesLibrary.Models;
-
+using ProgrammingResourcesLibrary.Repositories.Interfaces;
 
 namespace ProgrammingResourcesLibrary.Repositories;
-public class ResourceTagRepo
+public class ResourceTagRepo : IResourceTagRepo
 {
-	private readonly IDataAccess _dataAccess;
+    private readonly IDataAccess _dataAccess;
 
-	public ResourceTagRepo(IDataAccess dataAccess)
-	{
-		_dataAccess = dataAccess;
-	}
+    public ResourceTagRepo(IDataAccess dataAccess)
+    {
+        _dataAccess = dataAccess;
+    }
 
     public async Task<IEnumerable<ResourceTag>> GetAll()
     {
@@ -32,7 +32,7 @@ public class ResourceTagRepo
             resourceTag.ResourceId,
             resourceTag.TagId
         }, "ProgrammingResources");
-        
+
         resourceTag.ResourceTagId = id;
     }
 }

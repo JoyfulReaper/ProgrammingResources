@@ -12,4 +12,5 @@ BEGIN
 		[Resource]
 	WHERE
 		ResourceId = @ResourceId
+		AND DateDeleted IS NULL;
 END

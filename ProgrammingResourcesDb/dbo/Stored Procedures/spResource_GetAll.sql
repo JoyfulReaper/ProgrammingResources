@@ -9,4 +9,6 @@ BEGIN
 		,[DateCreated]	
 	FROM
 		[dbo].[Resource]
+	WHERE
+		DateDeleted IS NULL;
 END

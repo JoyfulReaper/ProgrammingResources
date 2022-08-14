@@ -1,4 +1,6 @@
 using ProgrammingResourceLibrary.DataAccess;
+using ProgrammingResourcesLibrary.Repositories;
+using ProgrammingResourcesLibrary.Repositories.Interfaces;
 
 namespace ProgrammingResourcesApi;
 
@@ -16,6 +18,9 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddScoped<IDataAccess, SqlDataAccess>();
+        builder.Services.AddScoped<IResourceRepo, IResourceRepo>();
+        builder.Services.AddScoped<ITagRepo, ITagRepo>();
+        builder.Services.AddScoped<IResourceTagRepo, ResourceTagRepo>();
 
         var app = builder.Build();
 

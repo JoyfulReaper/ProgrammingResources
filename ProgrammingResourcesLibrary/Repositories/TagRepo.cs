@@ -1,15 +1,16 @@
 ﻿using ProgrammingResourceLibrary.DataAccess;
 using ProgrammingResourcesLibrary.Models;
+using ProgrammingResourcesLibrary.Repositories.Interfaces;
 
 namespace ProgrammingResourcesLibrary.Repositories;
-public class TagRepo
+public class TagRepo : ITagRepo
 {
-	private readonly IDataAccess _dataAccess;
+    private readonly IDataAccess _dataAccess;
 
-	public TagRepo(IDataAccess dataAccess)
-	{
-		_dataAccess = dataAccess;
-	}
+    public TagRepo(IDataAccess dataAccess)
+    {
+        _dataAccess = dataAccess;
+    }
 
     public async Task<IEnumerable<Tag>> GetAll()
     {
@@ -32,5 +33,5 @@ public class TagRepo
         }, "ProgrammingResources");
         tag.TagId = id;
     }
-        
+
 }
