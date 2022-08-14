@@ -1,4 +1,5 @@
-﻿using ProgrammingResourcesApiClient.Models;
+﻿using ProgrammingResourcesApiClient.Interfaces;
+using ProgrammingResourcesApiClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ProgrammingResourcesApiClient;
-public class ResourceEndpoint : EndPoint
+public class ResourceEndpoint : EndPoint, IResourceEndpoint
 {
 	private readonly HttpClient _client;
 
@@ -16,7 +17,7 @@ public class ResourceEndpoint : EndPoint
 		_client = client;
 	}
 
-	public async Task <IEnumerable<Resource>> GetAll()
+	public async Task<IEnumerable<Resource>> GetAll()
 	{
 		var resources = await _client.GetFromJsonAsync<IEnumerable<Resource>>("api/Resource");
 		ThrowIfNull(resources);
