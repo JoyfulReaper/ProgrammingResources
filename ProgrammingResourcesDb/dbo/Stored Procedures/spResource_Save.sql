@@ -2,7 +2,8 @@
 	@ResourceId INT,
 	@Title NVARCHAR(100),
 	@Url NVARCHAR(500),
-	@Description NVARCHAR(1000)
+	@Description NVARCHAR(1000),
+	@ProgrammingLanguage NVARCHAR(100)
 AS
 BEGIN
 
@@ -11,11 +12,13 @@ BEGIN TRANSACTION;
 	INSERT dbo.[Resource]
 		([Title],
 		[Url],
-		[Description])
+		[Description],
+		[ProgrammingLanguage])
 	  SELECT
 		@Title,
 		@Url,
-		@Description
+		@Description,
+		@ProgrammingLanguage
 	  WHERE NOT EXISTS
 	  (
 		SELECT 1 FROM dbo.[Resource] WITH (UPDLOCK, SERIALIZABLE)
@@ -29,7 +32,8 @@ BEGIN TRANSACTION;
 			SET
 				[Title] = @Title,
 				[Url] = @Url,
-				[Description] = @Description
+				[Description] = @Description,
+				[ProgrammingLanguage] = @ProgrammingLanguage
 			WHERE
 				[ResourceId] = @ResourceId;
 		END

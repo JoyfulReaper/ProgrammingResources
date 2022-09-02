@@ -9,6 +9,7 @@ BEGIN
 		,[r].[Title]
 		,[r].[Url]
 		,[r].[Description]
+		,[r].[ProgrammingLanguage]
 		,[r].[DateCreated]
 	FROM
 		[ResourceTag] rt INNER JOIN

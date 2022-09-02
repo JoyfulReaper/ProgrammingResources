@@ -7,10 +7,11 @@ BEGIN
 		,[Title]
 		,[Url]
 		,[Description]
+		,[ProgrammingLanguage]
 		,[DateCreated]
 	FROM
 		[Resource]
 	WHERE
 		ResourceId = @ResourceId
-		AND DateDeleted IS NULL;
+	AND DateDeleted IS NULL;
 END

@@ -6,6 +6,7 @@ BEGIN
 		,[Title]
 		,[Url]
 		,[Description]
+		,[ProgrammingLanguage]
 		,[DateCreated]	
 	FROM
 		[dbo].[Resource]
