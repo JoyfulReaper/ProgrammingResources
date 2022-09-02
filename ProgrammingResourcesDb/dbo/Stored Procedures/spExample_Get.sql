@@ -11,5 +11,6 @@ BEGIN
 	FROM
 		dbo.[Example]
 	WHERE
-		ResourceId = @ResourceId;
+		ResourceId = @ResourceId
+	AND DateDeleted IS NULL;
 END
