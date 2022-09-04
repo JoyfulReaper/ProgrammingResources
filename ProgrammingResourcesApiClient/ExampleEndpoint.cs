@@ -1,8 +1,9 @@
-﻿using ProgrammingResourcesApiClient.Models;
+﻿using ProgrammingResourcesApiClient.Interfaces;
+using ProgrammingResourcesApiClient.Models;
 using System.Net.Http.Json;
 
 namespace ProgrammingResourcesApiClient;
-public class ExampleEndpoint : EndPoint
+public class ExampleEndpoint : EndPoint, IExampleEndpoint
 {
 	private readonly HttpClient _client;
 
