@@ -17,6 +17,7 @@ public class TagController : ControllerBase
 
     // GET: api/<TagController>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Tag>))]
     public async Task<IEnumerable<Tag>> Get()
     {
         return await _tagRepo.GetAll();
@@ -24,6 +25,8 @@ public class TagController : ControllerBase
 
     // GET api/<TagController>/5
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(Tag))]
     public async Task<ActionResult<Tag>> Get(int id)
     {
         var tag = await _tagRepo.Get(id);
@@ -37,6 +40,8 @@ public class TagController : ControllerBase
 
     // POST api/<TagController>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<Tag>> Post([FromBody] Tag tag)
     {
         await _tagRepo.Save(tag);

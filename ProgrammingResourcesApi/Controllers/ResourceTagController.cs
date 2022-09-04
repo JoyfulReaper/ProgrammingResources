@@ -31,6 +31,8 @@ public class ResourceTagController : ControllerBase
 
     // GET api/<ResourceTagController>/5
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResourceTag))]
     public async Task<ActionResult<ResourceTag>> Get(int id)
     {
         var rt = await _resourceTagRepo.Get(id);
@@ -44,6 +46,8 @@ public class ResourceTagController : ControllerBase
 
     // POST api/<ResourceTagController>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ResourceTag))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ResourceTag>> Post([FromBody] ResourceTag rt)
     {
         await _resourceTagRepo.Save(rt);
@@ -58,6 +62,8 @@ public class ResourceTagController : ControllerBase
 
     // DELETE api/<ResourceTagController>/5
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(int id)
     {
         var rt = await _resourceTagRepo.Get(id);

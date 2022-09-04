@@ -10,5 +10,7 @@ public class ProgrammingResourcesApiProfile : Profile
 	{
 		CreateMap<Resource, ResourceDto>();
 		CreateMap<ResourceDto, Resource>();
+		CreateMap<Example, ExampleDto>();
+		CreateMap<ExampleDto, Example>();
 	}
 }

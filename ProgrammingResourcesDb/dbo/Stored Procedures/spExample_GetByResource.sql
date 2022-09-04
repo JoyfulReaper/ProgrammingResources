@@ -1,5 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[spExample_Get]
-	@ExampleId INT
+﻿CREATE PROCEDURE [dbo].[spExample_GetByResource]
+	@ResourceId INT
 AS
 BEGIN
 	SELECT
@@ -11,6 +11,6 @@ BEGIN
 	FROM
 		dbo.[Example]
 	WHERE
-		ExampleId = @ExampleId
+		ResourceId = @ResourceId
 	AND DateDeleted IS NULL;
 END

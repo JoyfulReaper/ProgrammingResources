@@ -12,9 +12,14 @@ public class ExampleRepo : IExampleRepo
         _dataAccess = dataAccess;
     }
 
-    public async Task<IEnumerable<Example>> Get(int resourceId)
+    public async Task<IEnumerable<Example>> Get(int exampleId)
     {
-        return await _dataAccess.LoadDataAsync<Example, dynamic>("spExample_Get", new { resourceId }, "ProgrammingResources");
+        return await _dataAccess.LoadDataAsync<Example, dynamic>("spExample_Get", new { exampleId }, "ProgrammingResources");
+    }
+
+    public async Task<IEnumerable<Example>> GetByResource(int resourceId)
+    {
+        return await _dataAccess.LoadDataAsync<Example, dynamic>("spExample_GetByResource", new { resourceId }, "ProgrammingResources");
     }
 
     public async Task Save(Example example)

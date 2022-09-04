@@ -30,6 +30,8 @@ public class ResourceController : ControllerBase
 
     // GET api/<ResourceController>/5
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(ResourceDto))]
     public async Task<ActionResult<ResourceDto>> Get(int id)
     {
         var resource = await _resourceRepo.Get(id);
@@ -43,6 +45,8 @@ public class ResourceController : ControllerBase
 
     // POST api/<ResourceController>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ResourceDto))]
     public async Task<ActionResult<ResourceDto>> Post([FromBody] ResourceDto resourceCreateDto)
     {
         var resource = _mapper.Map<Resource>(resourceCreateDto);
@@ -58,6 +62,8 @@ public class ResourceController : ControllerBase
 
     // PUT api/<ResourceController>/5
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Put(int id, [FromBody] ResourceDto resource)
     {
         if(id != resource.ResourceId)
@@ -71,6 +77,8 @@ public class ResourceController : ControllerBase
 
     // DELETE api/<ResourceController>/5
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
         var resource = await _resourceRepo.Get(id);
