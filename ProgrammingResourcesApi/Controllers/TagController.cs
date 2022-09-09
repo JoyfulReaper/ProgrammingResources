@@ -54,4 +54,21 @@ public class TagController : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = savedTag.TagId }, savedTag);
     }
 
+    // POST api/<TagController>
+    [HttpPost("multiple")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<Tag>> PostMultiple([FromBody] List<Tag> tags)
+    {
+        var output = new List<Tag>();
+        foreach(var tag in tags)
+        {
+            await _tagRepo.Save(tag);
+            var savedTag = await _tagRepo.Get(tag.TagId);
+            output.Add(savedTag);
+        }
+
+        return Ok(output);
+    }
+
 }

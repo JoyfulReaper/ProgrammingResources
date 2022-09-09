@@ -37,4 +37,13 @@ public class TagEndpoint : EndPoint, ITagEndpoint
 		ThrowIfNull(tagResp);
 		return tagResp!;
 	}
+
+    public async Task<List<Tag>> Post(List<Tag> tags)
+    {
+        using var response = await _client.PostAsJsonAsync("api/Tag/Multiple", tags);
+        CheckResponse(response);
+        var tagResp = await response.Content.ReadFromJsonAsync<List<Tag>>();
+        ThrowIfNull(tagResp);
+        return tagResp!;
+    }
 }

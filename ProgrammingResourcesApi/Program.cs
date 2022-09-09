@@ -73,6 +73,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseCors();
         app.UseAuthorization();
 
 
