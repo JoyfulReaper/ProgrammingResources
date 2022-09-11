@@ -9,6 +9,6 @@ public class ResourceDto
     public string Url { get; set; } = null!;
     public string? Description { get; set; }
     public string? ProgrammingLanguage { get; set; }
-    public List<Tag>? Tags { get; set; }
+    public List<Tag> Tags { get; set; } = new();
     public DateTime DateCreated { get; set; }
 }

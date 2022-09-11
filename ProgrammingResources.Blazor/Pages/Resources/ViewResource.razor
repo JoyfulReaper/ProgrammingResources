@@ -1,0 +1,29 @@
+﻿@page "/view-resource/{ResourceId:int}"
+@inject IResourceEndpoint _resourceData
+
+<div class="row">
+    <div class="col">
+        <ErrorMessage Error="@_errorMessage" />
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ResourceId { get; set; }
+
+    private Resource? _resource = null;
+    private string? _errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            _resource = await _resourceData.Get(ResourceId);
+            _errorMessage = null;
+        } catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+    }
+}

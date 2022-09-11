@@ -1,6 +1,7 @@
 ﻿@page "/add-resource"
 @inject IResourceEndpoint _resourceData
 @inject IConfiguration _config
+@inject NavigationManager _navManager
 
 <ErrorMessage Error="@_errorMessage" />
 
@@ -67,7 +68,6 @@
     {
         try
         {
-            _resource.Tags = new List<Tag>();
             foreach (var tag in _tagOptions)
             {
                 var t = new Tag()
@@ -77,7 +77,7 @@
                 _resource.Tags.Add(t);
             }
             await _resourceData.Post(_resource);
-            _errorMessage = "DONE!";
+            _navManager.NavigateTo($"/view-resource/{_resource.ResourceId}");
         }
         catch (Exception ex)
         {

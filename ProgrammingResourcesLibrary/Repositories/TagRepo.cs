@@ -34,4 +34,10 @@ public class TagRepo : ITagRepo
         tag.TagId = id;
     }
 
+    public async Task<IEnumerable<Tag>> GetByResourceId(int resourceId)
+    {
+        var tags = await _dataAccess.LoadDataAsync<Tag, dynamic>("spTag_GetByResourceId", new { resourceId }, "ProgrammingResources");
+        return tags;
+    }
+
 }

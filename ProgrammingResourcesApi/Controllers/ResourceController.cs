@@ -30,8 +30,19 @@ public class ResourceController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<ResourceDto>> Get()
     {
-        var resource = await _resourceRepo.GetAll();
-        return _mapper.Map<IEnumerable<ResourceDto>>(resource);
+        // TODO sp for getting the DTO
+
+        var resources = await _resourceRepo.GetAll();
+
+        var output = new List<ResourceDto>();
+        foreach (var resource in resources)
+        {
+            var r = _mapper.Map<ResourceDto>(resource);
+            r.Tags = (await _tagRepo.GetByResourceId(r.ResourceId))
+                .ToList();
+        }
+
+        return output;
     }
 
     // GET api/<ResourceController>/5
@@ -41,12 +52,17 @@ public class ResourceController : ControllerBase
     public async Task<ActionResult<ResourceDto>> Get(int id)
     {
         var resource = await _resourceRepo.Get(id);
+
         if(resource == null)
         {
             return NotFound();
         }
 
-        return _mapper.Map<ResourceDto>(resource);
+        var output = _mapper.Map<ResourceDto>(resource);
+        output.Tags = (await _tagRepo.GetByResourceId(output.ResourceId))
+            .ToList();
+
+        return _mapper.Map<ResourceDto>(output);
     }
 
     // POST api/<ResourceController>
@@ -58,7 +74,7 @@ public class ResourceController : ControllerBase
         var resource = _mapper.Map<Resource>(resourceCreateDto);
         await _resourceRepo.Save(resource);
 
-        if (resourceCreateDto.Tags is not null)
+        if (resourceCreateDto.Tags.Any())
         {
             foreach (var tag in resourceCreateDto.Tags)
             {
@@ -72,11 +88,14 @@ public class ResourceController : ControllerBase
         }
 
         var savedResource = await _resourceRepo.Get(resource.ResourceId);
+        var output = _mapper.Map<ResourceDto>(savedResource);
+        output.Tags = (await _tagRepo.GetByResourceId(output.ResourceId))
+            .ToList();
+
         if(savedResource == null)
         {
             return BadRequest();
         }
-        var output = _mapper.Map<ResourceDto>(savedResource);
         return CreatedAtAction(nameof(Get), new { id = output.ResourceId }, output);
     }
 

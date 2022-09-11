@@ -81,6 +81,7 @@
     <Build Include="dbo\Stored Procedures\spExample_GetByResource.sql" />
     <Build Include="dbo\Stored Procedures\spExample_Delete.sql" />
     <Build Include="dbo\Stored Procedures\spExample_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_GetByResourceId.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResourcesDb.refactorlog" />
