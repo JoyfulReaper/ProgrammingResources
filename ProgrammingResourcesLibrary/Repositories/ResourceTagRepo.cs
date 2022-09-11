@@ -32,14 +32,11 @@ public class ResourceTagRepo : IResourceTagRepo
 
     public async Task Save(ResourceTag resourceTag)
     {
-        var id = await _dataAccess.SaveDataAndGetIdAsync("spResourceTag_Save", new
+        await _dataAccess.SaveDataAsync("spResourceTag_Save", new
         {
-            resourceTag.ResourceTagId,
             resourceTag.ResourceId,
             resourceTag.TagId
         }, "ProgrammingResources");
-
-        resourceTag.ResourceTagId = id;
     }
 
     public async Task Delete(int resourceTagId)

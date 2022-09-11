@@ -31,7 +31,8 @@ public class ResourceRepo : IResourceRepo
             resource.ResourceId,
             resource.Title,
             resource.Description,
-            resource.Url
+            resource.Url,
+            resource.ProgrammingLanguage,
         }, "ProgrammingResources");
 
         resource.ResourceId = id;

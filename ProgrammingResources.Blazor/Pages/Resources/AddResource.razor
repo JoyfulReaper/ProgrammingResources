@@ -2,6 +2,8 @@
 @inject IResourceEndpoint _resourceData
 @inject IConfiguration _config
 
+<ErrorMessage Error="@_errorMessage" />
+
 <div class="row">
     <div class="col">
         <EditForm Model="@_resource" OnValidSubmit="HandleValidSubmit">
@@ -59,23 +61,23 @@
     private string[] _selectedTags = new string[] { };
     private List<string> _tagOptions = new();
 
-    private string _errorMessage = null!;
+    private string? _errorMessage;
 
     private async Task HandleValidSubmit()
     {
         try
         {
-            await _resourceData.Post(_resource);
-
-            var tags = new List<Tag>();
+            _resource.Tags = new List<Tag>();
             foreach (var tag in _tagOptions)
             {
                 var t = new Tag()
                     {
                         Name = tag
                     };
-                tags.Add(t);
+                _resource.Tags.Add(t);
             }
+            await _resourceData.Post(_resource);
+            _errorMessage = "DONE!";
         }
         catch (Exception ex)
         {

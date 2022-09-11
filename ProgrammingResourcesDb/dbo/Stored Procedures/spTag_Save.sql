@@ -14,7 +14,7 @@ BEGIN TRANSACTION;
 	  (
 		SELECT 1 FROM dbo.Tag WITH (UPDLOCK, SERIALIZABLE)
 		  WHERE 
-			[TagId] = @TagId
+			[Name] = @Name
 	  );
  
 	IF @@ROWCOUNT = 0

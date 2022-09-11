@@ -11,12 +11,18 @@ namespace ProgrammingResourcesApi.Controllers;
 public class ResourceController : ControllerBase
 {
     private readonly IResourceRepo _resourceRepo;
+    private readonly ITagRepo _tagRepo;
+    private readonly IResourceTagRepo _resourceTag;
     private readonly IMapper _mapper;
 
     public ResourceController(IResourceRepo resourceRepo,
+        ITagRepo tagRepo,
+        IResourceTagRepo resourceTag,
         IMapper mapper)
     {
         _resourceRepo = resourceRepo;
+        _tagRepo = tagRepo;
+        _resourceTag = resourceTag;
         _mapper = mapper;
     }
 
@@ -51,6 +57,20 @@ public class ResourceController : ControllerBase
     {
         var resource = _mapper.Map<Resource>(resourceCreateDto);
         await _resourceRepo.Save(resource);
+
+        if (resourceCreateDto.Tags is not null)
+        {
+            foreach (var tag in resourceCreateDto.Tags)
+            {
+                await _tagRepo.Save(tag);
+                await _resourceTag.Save(new ResourceTag
+                {
+                    ResourceId = resource.ResourceId,
+                    TagId = tag.TagId
+                });
+            }
+        }
+
         var savedResource = await _resourceRepo.Get(resource.ResourceId);
         if(savedResource == null)
         {
