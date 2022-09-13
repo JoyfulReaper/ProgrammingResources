@@ -76,7 +76,7 @@
                     };
                 _resource.Tags.Add(t);
             }
-            await _resourceData.Post(_resource);
+            _resource = await _resourceData.Post(_resource);
             _navManager.NavigateTo($"/view-resource/{_resource.ResourceId}");
         }
         catch (Exception ex)

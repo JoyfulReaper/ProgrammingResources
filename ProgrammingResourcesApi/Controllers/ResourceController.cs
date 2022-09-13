@@ -40,6 +40,7 @@ public class ResourceController : ControllerBase
             var r = _mapper.Map<ResourceDto>(resource);
             r.Tags = (await _tagRepo.GetByResourceId(r.ResourceId))
                 .ToList();
+            output.Add(r);
         }
 
         return output;

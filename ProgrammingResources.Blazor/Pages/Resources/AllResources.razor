@@ -1,0 +1,54 @@
+﻿@page "/all-resources"
+@inject IResourceEndpoint _resourceData
+
+<div class="row">
+    <div class="col">
+        <ErrorMessage Error="@_errorMessage" />
+
+        @if (_resources is null)
+        {
+            <Loading />
+        }
+        else
+        {
+            <div class="row">
+                    @foreach (var resource in _resources)
+                    {
+                        <div class="col-auto">
+                            <div class="card m-3" style="width: 20rem; height: 18rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title">@resource.Title</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">@resource.ProgrammingLanguage</h6>
+                                    <p class="card-text clamped-text">@resource.Description</p>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><a href="@resource.Url" class="card-link">Resource Link</a></li>
+                                    <li class="list-group-item"><a href="view-resource/@resource.ResourceId" class="card-link">Resource Details</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private List<Resource>? _resources = null;
+    private string? _errorMessage = null;
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            _resources = (await _resourceData.GetAll())
+                .ToList();
+            _errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+    }
+}
