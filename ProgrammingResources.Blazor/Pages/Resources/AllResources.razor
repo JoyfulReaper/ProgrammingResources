@@ -12,10 +12,12 @@
         else
         {
             <div class="row">
+                <h3 class="text-center">All Resources</h3>
+
                     @foreach (var resource in _resources)
                     {
                         <div class="col-auto">
-                            <div class="card m-3" style="width: 20rem; height: 18rem;">
+                            <div class="card m-3" style="width: 23rem; height: 14em;">
                                 <div class="card-body">
                                     <h5 class="card-title">@resource.Title</h5>
                                     <h6 class="card-subtitle mb-2 text-muted">@resource.ProgrammingLanguage</h6>
