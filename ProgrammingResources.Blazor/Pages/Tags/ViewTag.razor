@@ -1,0 +1,42 @@
+﻿@page "/view-tag/{TagId:int}"
+@inject IResourceTagEndpoint _resourceTagData
+
+<div class="row">
+    <div class="col">
+        <ErrorMessage Error="@_errorMessage" />
+
+        @if (_resources is null)
+        {
+            <Loading />
+        }
+        else
+        {
+            
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int TagId { get; set; }
+
+    private List<Resource>? _resources = null;
+    private string? _errorMessage = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            _resources = (await _resourceTagData.GetTaggedResources(TagId))
+                .ToList();
+
+            _errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+        
+    }
+}

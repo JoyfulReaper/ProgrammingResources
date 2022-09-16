@@ -9,5 +9,5 @@ public interface IResourceTagEndpoint
     Task Delete(int resourceTagId);
     Task<ResourceTag> Get(int resourceTagId);
     Task<IEnumerable<ResourceTag>> GetAll();
-    Task<Resource> Post(ResourceTag resourceTag);
+    Task<ResourceTag> Post(ResourceTag resourceTag);
 }

@@ -12,21 +12,21 @@
         else
         {
             <div class="row">
-                <h3 class="text-center">All Resources</h3>
+                <h3 class="text-center">All Tags</h3>
 
                 @foreach (var tag in _tags)
                 {
                     <div class="col-auto m-2">
                         <div class="card" style="width: 10rem; height: 2em;">
-                            <h5 class="card-title">@tag.Name</h5>
+                            <h5 class="card-title">
+                                <a href="view-tag/@tag.TagId">@tag.Name</a>
+                            </h5>
                         </div>
                     </div>
                 }
 
             </div>
         }
-
-        <h3 class="text-center">All Tags</h3>
     </div>
 </div>
 
