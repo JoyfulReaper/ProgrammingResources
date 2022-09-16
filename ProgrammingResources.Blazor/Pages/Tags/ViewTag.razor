@@ -1,5 +1,6 @@
 ﻿@page "/view-tag/{TagId:int}"
 @inject IResourceTagEndpoint _resourceTagData
+@inject ITagEndpoint _tagData
 
 <div class="row">
     <div class="col">
@@ -11,7 +12,26 @@
         }
         else
         {
-            
+            <div class="row">
+                <h3 class="text-center">All Resources tagged with @_tag.Name</h3>
+
+                    @foreach (var resource in _resources)
+                    {
+                        <div class="col-auto">
+                            <div class="card m-3" style="width: 23rem; height: 14em;">
+                                <div class="card-body">
+                                    <h5 class="card-title">@resource.Title</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">@resource.ProgrammingLanguage</h6>
+                                    <p class="card-text clamped-text">@resource.Description</p>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><a href="@resource.Url" class="card-link">Resource Link</a></li>
+                                    <li class="list-group-item"><a href="view-resource/@resource.ResourceId" class="card-link">Resource Details</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+            </div>
         }
 
     </div>
@@ -21,6 +41,7 @@
     [Parameter]
     public int TagId { get; set; }
 
+    private Tag _tag = null!;
     private List<Resource>? _resources = null;
     private string? _errorMessage = null;
 
@@ -28,6 +49,7 @@
     {
         try
         {
+            _tag = await _tagData.Get(TagId);
             _resources = (await _resourceTagData.GetTaggedResources(TagId))
                 .ToList();
 

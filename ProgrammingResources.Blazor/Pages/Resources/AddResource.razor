@@ -27,7 +27,7 @@
             <div class="row">
                 <div class="col-6">
                     <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Tag" @bind-value="_tag" />
+                        <input type="text" class="form-control" placeholder="Tag" @bind-value="_tag"/>
                         <label>Tag</label>
                     </div>
                     <div class="mt-1">
@@ -39,7 +39,7 @@
                     <InputSelect @bind-Value="_selectedTags" class="form-control">
                         @foreach (var option in _tagOptions)
                         {
-                            <option value="@option">@option</option>
+                            <option @key=option value="@option">@option</option>
                         }
                     </InputSelect>
                 </div>
@@ -61,7 +61,6 @@
     private string _tag = string.Empty;
     private string[] _selectedTags = new string[] { };
     private List<string> _tagOptions = new();
-
     private string? _errorMessage;
 
     private async Task HandleValidSubmit()
@@ -92,7 +91,12 @@
             return;
         }
 
-        _tagOptions.Add(_tag);
+        @if (!_tagOptions.Contains(_tag))
+        {
+            _tagOptions.Add(_tag);
+            _tagOptions.Sort();
+        }
+
         _tag = string.Empty;
     }
 

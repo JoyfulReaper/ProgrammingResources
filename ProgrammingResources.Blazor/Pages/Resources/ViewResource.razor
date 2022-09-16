@@ -26,7 +26,7 @@
                     <h3>Tags</h3>
                     @foreach (var tag in _resource.Tags)
                     {
-                        <span>@tag.Name</span><br />
+                        <span><a href="view-tag/@tag.TagId">@tag.Name</a></span><br />
                     }
                 </div>
             </div>
