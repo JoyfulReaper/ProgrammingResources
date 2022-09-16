@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProgrammingResourcesApi.DTOs;
 using ProgrammingResourcesLibrary.Models;
 using ProgrammingResourcesLibrary.Repositories.Interfaces;
 
@@ -10,10 +11,44 @@ namespace ProgrammingResourcesApi.Controllers;
 public class ResourceTagController : ControllerBase
 {
     private readonly IResourceTagRepo _resourceTagRepo;
+    private readonly ITagRepo _tagRepo;
 
-    public ResourceTagController(IResourceTagRepo resourceTagRepo)
+    public ResourceTagController(IResourceTagRepo resourceTagRepo,
+        ITagRepo tagRepo)
     {
         _resourceTagRepo = resourceTagRepo;
+        _tagRepo = tagRepo;
+    }
+
+    [HttpPost("TagResource")]
+    public async Task<IActionResult> TagResource(TagResourceDto tagResource)
+    {
+        var tag = new Tag
+        {
+            Name = tagResource.TagName
+        };
+
+        await _tagRepo.Save(tag);
+        var savedTag = await _tagRepo.Get(tag.TagId);
+        if(savedTag is null)
+        {
+            return BadRequest();
+        }
+
+        ResourceTag rt = new()
+        {
+            ResourceId = tagResource.ResourceId,
+            TagId = savedTag.TagId
+        };
+
+        await _resourceTagRepo.Save(rt);
+        var savedRt = await _resourceTagRepo.Get(rt.ResourceTagId);
+        if(savedRt is null)
+        {
+            return BadRequest();
+        }
+
+        return NoContent();
     }
 
     [HttpGet("Tagged/{tagId}")]

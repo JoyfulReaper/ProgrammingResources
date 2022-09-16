@@ -1,11 +1,6 @@
 ﻿using ProgrammingResourcesApiClient.Interfaces;
 using ProgrammingResourcesApiClient.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProgrammingResourcesApiClient;
 public class ResourceTagEndpoint :EndPoint, IResourceTagEndpoint
@@ -15,6 +10,18 @@ public class ResourceTagEndpoint :EndPoint, IResourceTagEndpoint
 	public ResourceTagEndpoint(HttpClient client)
 	{
 		_client = client;
+	}
+
+	public async Task TagResource(int resourceId, string tag)
+	{
+		ResourceTagRequest request = new()
+		{
+			ResourceId = resourceId,
+			TagName = tag
+		};
+
+        using var response = await _client.PostAsJsonAsync($"api/ResourceTag/TagResource", request);
+		CheckResponse(response);
 	}
 
 	public async Task Delete(int resourceTagId)

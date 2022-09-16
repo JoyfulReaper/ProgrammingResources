@@ -10,4 +10,5 @@ public interface IResourceTagEndpoint
     Task<ResourceTag> Get(int resourceTagId);
     Task<IEnumerable<ResourceTag>> GetAll();
     Task<ResourceTag> Post(ResourceTag resourceTag);
+    Task TagResource(int resourceId, string tag);
 }

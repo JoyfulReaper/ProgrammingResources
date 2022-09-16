@@ -1,5 +1,6 @@
 ﻿@page "/view-resource/{ResourceId:int}"
 @inject IResourceEndpoint _resourceData
+@inject IResourceTagEndpoint _resourceTagData
 
 <div class="row">
     <div class="col">
@@ -26,8 +27,15 @@
                     <h3>Tags</h3>
                     @foreach (var tag in _resource.Tags)
                     {
-                        <span><a href="view-tag/@tag.TagId">@tag.Name</a></span><br />
+                        <span><a href="view-tag/@tag.TagId">@tag.Name</a></span>
+                        <br />
                     }
+                    <div class="mt-3">
+                        <label>Add Tag</label>
+                        <input class="form-control from-control-sm" @bind="_tag"/>
+                        <button class="btn btn-sm btn-primary mt-1" type="button" @onclick="AddTag">Add</button>
+                    </div>
+
                 </div>
             </div>
 
@@ -42,6 +50,7 @@
 
     private Resource? _resource = null;
     private string? _errorMessage;
+    private string _tag;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -54,5 +63,25 @@
         {
             _errorMessage = ex.Message;
         }
+    }
+
+    private async Task AddTag()
+    {
+        if(string.IsNullOrEmpty(_tag))
+        {
+            return;
+        }
+
+        try
+        {
+            await _resourceTagData.TagResource(ResourceId, _tag);
+            _errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+        }
+
+        _tag = string.Empty;
     }
 }
