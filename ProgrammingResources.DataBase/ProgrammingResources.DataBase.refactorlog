@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="1b079411-73df-41d8-ba69-94f530e41dc1" ChangeDateTime="10/24/2022 22:43:11">
+    <Property Name="ElementName" Value="[dbo].[Resource].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Resource]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ResourceId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="1d32aa72-18ed-40d6-b532-fb338b9ed3e3" ChangeDateTime="10/24/2022 22:45:20">
+    <Property Name="ElementName" Value="[dbo].[ProgrammingLanguage].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ProgrammingLanguage]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProgrammingLanguageId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="68e8eb23-f1cf-4292-9be1-d0ff931eb86e" ChangeDateTime="10/24/2022 22:48:40">
+    <Property Name="ElementName" Value="[dbo].[Example].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Example]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ExampleId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8d90050b-fc08-4482-895b-9e1d4d1c42ee" ChangeDateTime="10/24/2022 22:52:14">
+    <Property Name="ElementName" Value="[dbo].[Tag].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Tag]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TagId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="492c7aa8-0d30-451a-a80e-b973b8b7c345" ChangeDateTime="10/24/2022 22:53:29">
+    <Property Name="ElementName" Value="[dbo].[ResourceTag].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ResourceTag]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ResourceTagId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9ded0a6a-a48f-451b-9308-8fc2b4895d85" ChangeDateTime="10/24/2022 22:57:09">
+    <Property Name="ElementName" Value="[dbo].[Type].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Type]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TypeId" />
+  </Operation>
+</Operations>
