@@ -68,7 +68,8 @@ public static class Swagger
             //    Title = $"{title} v2",
             //    Description = description,
             //    TermsOfService = terms,
-            //    License = License
+            //    License = license,
+            //    Contact = contact
             //});
 
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

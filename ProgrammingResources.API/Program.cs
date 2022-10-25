@@ -10,6 +10,7 @@ builder.Services.Configure<JwtOptions>(
 
 // Services
 builder.Services.AddControllers();
+
 builder.AddSwagger();
 builder.AddIdentity();
 builder.AddAuthenticationAndAuthorization();
