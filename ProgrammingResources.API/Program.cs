@@ -20,7 +20,7 @@ builder.AddCors();
 
 builder.Services.AddProgrammingResources(opts =>
 {
-    opts.ConnectionString = "ProgrammingApiData";
+    opts.ConnectionString = builder.Configuration.GetConnectionString("ProgrammingApiData");
 });
 
 builder.Services.AddTransient<ITokenService, TokenService>();

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using ProgrammingResources.Library.DependencyInjection;
 using System.Data.SqlClient;
 using System.Data;
@@ -11,19 +10,15 @@ namespace ProgrammingResources.Library.Services;
 public class TypeService : ITypeService
 {
     private readonly ProgrammingResourcesOptions _options;
-    private readonly IConfiguration _configuration;
 
-    public TypeService(IOptions<ProgrammingResourcesOptions> options,
-        IConfiguration configuration)
+    public TypeService(IOptions<ProgrammingResourcesOptions> options)
     {
         _options = options.Value;
-        _configuration = configuration;
     }
 
     public async Task<IEnumerable<Type>> GetAll()
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         var types = await connection.QueryAsync<Type>("dbo.spType_GetAll",
             commandType: CommandType.StoredProcedure);
@@ -33,8 +28,7 @@ public class TypeService : ITypeService
 
     public async Task<Type?> Get(int typeId)
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         var type = (await connection.QueryAsync<Type>("dbo.spType_Get",
             new { typeId },
@@ -46,8 +40,7 @@ public class TypeService : ITypeService
 
     public async Task<Type> Add(Type type)
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         Type output = (await connection.QueryAsync<Type>("dbo.spType_Insert",
             new { UserId = type.UserId, Name = type.Name },
@@ -59,8 +52,7 @@ public class TypeService : ITypeService
 
     public async Task Delete(int typeId)
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         await connection.ExecuteAsync("dbo.spType_Delete",
             new { typeId },

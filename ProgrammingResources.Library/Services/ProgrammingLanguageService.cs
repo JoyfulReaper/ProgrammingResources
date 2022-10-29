@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using ProgrammingResources.Library.DependencyInjection;
 using ProgrammingResources.Library.Models;
@@ -12,19 +11,15 @@ namespace ProgrammingResources.Library.Services;
 public class ProgrammingLanguageService : IProgrammingLanguageService
 {
     private readonly ProgrammingResourcesOptions _options;
-    private readonly IConfiguration _configuration;
 
-    public ProgrammingLanguageService(IOptions<ProgrammingResourcesOptions> options,
-        IConfiguration configuration)
+    public ProgrammingLanguageService(IOptions<ProgrammingResourcesOptions> options)
     {
         _options = options.Value;
-        _configuration = configuration;
     }
 
     public async Task<IEnumerable<ProgrammingLanguage>> GetAll()
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         var programmingLanguages = await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_GetAll",
             commandType: CommandType.StoredProcedure);
@@ -34,8 +29,7 @@ public class ProgrammingLanguageService : IProgrammingLanguageService
 
     public async Task<ProgrammingLanguage?> Get(int ProgrammingLanguageId)
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         var programmingLanguage = (await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Get",
             new { ProgrammingLanguageId },
@@ -47,8 +41,7 @@ public class ProgrammingLanguageService : IProgrammingLanguageService
 
     public async Task<ProgrammingLanguage> Add(ProgrammingLanguage language)
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         ProgrammingLanguage programmingLanguage = (await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Insert",
             new { UserId = language.UserId, Language = language.Language },
@@ -60,8 +53,7 @@ public class ProgrammingLanguageService : IProgrammingLanguageService
 
     public async Task Delete(int programmingLanguageId)
     {
-        string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
-        using IDbConnection connection = new SqlConnection(connectionString);
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         await connection.ExecuteAsync("dbo.spProgrammingLanguage_Delete",
             new { programmingLanguageId },
