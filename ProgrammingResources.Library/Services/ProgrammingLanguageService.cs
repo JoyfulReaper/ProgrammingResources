@@ -45,13 +45,13 @@ public class ProgrammingLanguageService : IProgrammingLanguageService
         return programmingLanguage;
     }
 
-    public async Task<ProgrammingLanguage> Add(ProgrammingLanguage language, string UserId)
+    public async Task<ProgrammingLanguage> Add(ProgrammingLanguage language)
     {
         string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
         using IDbConnection connection = new SqlConnection(connectionString);
 
         ProgrammingLanguage programmingLanguage = (await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Insert",
-            new { UserId, Language = language.Language },
+            new { UserId = language.UserId, Language = language.Language },
             commandType: CommandType.StoredProcedure))
             .Single();
 
