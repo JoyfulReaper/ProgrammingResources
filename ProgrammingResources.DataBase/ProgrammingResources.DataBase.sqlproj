@@ -74,6 +74,10 @@
     <Build Include="dbo\Stored Procedures\spProgrammingLanguage_Get.sql" />
     <Build Include="dbo\Stored Procedures\spProgrammingLanguage_Insert.sql" />
     <Build Include="dbo\Stored Procedures\spProgrammingLanguage_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\spType_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\spType_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spType_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\spType_Insert.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResources.DataBase.refactorlog" />

@@ -24,7 +24,7 @@ public class ProgrammingLanguageController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet(Name = "GetAll")]
+    [HttpGet(Name = "ProgrammingLanguageGetAll")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProgrammingLanguage>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<ProgrammingLanguage>>> GetAll()
@@ -45,7 +45,7 @@ public class ProgrammingLanguageController : ControllerBase
         }
     }
 
-    [HttpGet("{programmingLanguageId}", Name = "Get")]
+    [HttpGet("{programmingLanguageId}", Name = "ProgrammingLanguageGet")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProgrammingLanguageDto))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -68,7 +68,7 @@ public class ProgrammingLanguageController : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost (Name="ProgrammingLanguageInsert")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProgrammingLanguageDto))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ProgrammingLanguage>> Insert(string programmingLanguage)
@@ -92,7 +92,7 @@ public class ProgrammingLanguageController : ControllerBase
 
     }
 
-    [HttpDelete]
+    [HttpDelete (Name = "ProgrammingLanguageDelete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(int programmingLangaugeId)

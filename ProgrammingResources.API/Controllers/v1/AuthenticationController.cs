@@ -94,6 +94,11 @@ public class AuthenticationController : ControllerBase
     private async Task<ApiIdentityUser?> ValidateCredentials(LoginRec login)
     {
         ApiIdentityUser user = await _userManager.FindByNameAsync(login.UserName);
+        if (user is null)
+        {
+            return null;
+        }
+
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, login.Password, true);
         if (result.Succeeded)
         {

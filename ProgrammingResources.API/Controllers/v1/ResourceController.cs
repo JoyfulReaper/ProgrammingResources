@@ -9,9 +9,8 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ResourceController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult Test()
-    {
-        return Ok("It worked!");
-    }
+	public ResourceController()
+	{
+
+	}
 }

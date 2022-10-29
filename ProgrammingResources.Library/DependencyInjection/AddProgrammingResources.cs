@@ -9,6 +9,7 @@ public static class AddProgrammingResouces
         Action<ProgrammingResourcesOptions>? setupAction = null)
     {
         services.AddTransient<IProgrammingLanguageService, ProgrammingLanguageService>();
+        services.AddTransient<ITypeService, TypeService>();
 
         if(setupAction is not null )
         {

@@ -28,7 +28,7 @@ public class TokenController : ControllerBase
         _jwtOptions = jwtOptions.Value;
     }
 
-    [HttpPost("refresh")]
+    [HttpPost("TokenRefresh")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Refresh(TokenApiModel tokenApiModel)
@@ -65,7 +65,7 @@ public class TokenController : ControllerBase
     }
 
     [HttpPost]
-    [Route("revoke")]
+    [Route("TokenRevoke")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Revoke()
