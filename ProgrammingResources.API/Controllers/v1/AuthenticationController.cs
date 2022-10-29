@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ProgrammingResources.API.Identity;
+using ProgrammingResources.API.Models;
 using ProgrammingResources.API.Options;
+using ProgrammingResources.API.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,28 +18,23 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<ApiIdentityUser> _userManager;
+    private readonly SignInManager<ApiIdentityUser> _signInManager;
+    private readonly ITokenService _tokenService;
     private readonly JwtOptions _jwtOptions;
 
     public record RegisterRec(string? UserName, string? Password, string? EmailAddress);
     public record LoginRec(string? UserName, string? Password);
 
-    public AuthenticationController(UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager,
-        IOptions<JwtOptions> jwtOptions)
+    public AuthenticationController(UserManager<ApiIdentityUser> userManager,
+        SignInManager<ApiIdentityUser> signInManager,
+        IOptions<JwtOptions> jwtOptions,
+        ITokenService tokenService)
 	{
         _userManager = userManager;
         _signInManager = signInManager;
+        _tokenService = tokenService;
         _jwtOptions = jwtOptions.Value;
-    }
-
-    [HttpGet("TestLogin", Name = "TestLogin")]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    public IActionResult TestLogin()
-    {
-        return Ok("You are logged in!");
     }
 
     [HttpPost("token", Name = "GetToken")]
@@ -53,7 +51,16 @@ public class AuthenticationController : ControllerBase
         }
 
         var token = GenerateToken(user);
-        return Ok(token);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(_jwtOptions.RefreshExpirationDays);
+        await _userManager.UpdateAsync(user);
+
+        return Ok(new AuthenticatedResponse
+        {
+            Token = token,
+            RefreshToken = refreshToken,
+        });
     }
 
     [AllowAnonymous]
@@ -62,7 +69,7 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterRec registerRec)
     {
-        var user = new IdentityUser
+        var user = new ApiIdentityUser
         {
             UserName = registerRec.UserName,
             Email = registerRec.EmailAddress,
@@ -84,9 +91,9 @@ public class AuthenticationController : ControllerBase
         }
     }
 
-    private async Task<IdentityUser?> ValidateCredentials(LoginRec login)
+    private async Task<ApiIdentityUser?> ValidateCredentials(LoginRec login)
     {
-        IdentityUser user = await _userManager.FindByNameAsync(login.UserName);
+        ApiIdentityUser user = await _userManager.FindByNameAsync(login.UserName);
         SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, login.Password, true);
         if (result.Succeeded)
         {
@@ -98,25 +105,14 @@ public class AuthenticationController : ControllerBase
 
     private string GenerateToken(IdentityUser user)
     {
-        var secretKey = new SymmetricSecurityKey(
-            Encoding.ASCII.GetBytes(
-                _jwtOptions.SecretKey));
+        List<Claim> claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
 
-        var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-        List<Claim> claims = new List<Claim>();
-        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
-        claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName));
-
-        var token = new JwtSecurityToken(
-            _jwtOptions.Issuer,
-            _jwtOptions.Audience,
-            claims,
-            DateTime.UtcNow,
-            DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes),
-            signingCredentials);
-
-        return new JwtSecurityTokenHandler()
-            .WriteToken(token);
+        return _tokenService.GenerateAccessToken(claims);
     }
 }

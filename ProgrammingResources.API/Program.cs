@@ -1,4 +1,5 @@
 using ProgrammingResources.API.Options;
+using ProgrammingResources.API.Services;
 using ProgrammingResources.API.ServiceSetup;
 using ProgrammingResources.Library.DependencyInjection;
 
@@ -21,6 +22,8 @@ builder.Services.AddProgrammingResources(opts =>
 {
     opts.ConnectionString = "ProgrammingApiData";
 });
+
+builder.Services.AddTransient<ITokenService, TokenService>();
 
 var app = builder.Build();
 
