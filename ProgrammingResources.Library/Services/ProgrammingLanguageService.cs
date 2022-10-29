@@ -37,7 +37,7 @@ public class ProgrammingLanguageService : IProgrammingLanguageService
         string connectionString = _configuration.GetConnectionString(_options.ConnectionString);
         using IDbConnection connection = new SqlConnection(connectionString);
 
-        var programmingLanguage = (await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_GetAll",
+        var programmingLanguage = (await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Get",
             new { ProgrammingLanguageId },
             commandType: CommandType.StoredProcedure))
             .SingleOrDefault();

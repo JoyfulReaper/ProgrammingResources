@@ -71,7 +71,7 @@
     <Build Include="dbo\Tables\ResourceTag.sql" />
     <Build Include="dbo\Tables\Type.sql" />
     <Build Include="dbo\Stored Procedures\spProgrammingLanguage_GetAll.sql" />
-    <Build Include="dbo\Stored Procedures\spProgrammingLanuge_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spProgrammingLanguage_Get.sql" />
     <Build Include="dbo\Stored Procedures\spProgrammingLanguage_Insert.sql" />
     <Build Include="dbo\Stored Procedures\spProgrammingLanguage_Delete.sql" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[spProgrammingLanuge_Get]
+﻿CREATE PROCEDURE [dbo].[spProgrammingLanguage_Get]
 	@ProgrammingLanguageId INT
 AS
 BEGIN

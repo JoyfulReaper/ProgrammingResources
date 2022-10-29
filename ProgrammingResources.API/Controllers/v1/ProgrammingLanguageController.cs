@@ -24,9 +24,8 @@ public class ProgrammingLanguageController : ControllerBase
     }
 
     [HttpGet(Name = "GetAll")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProgrammingLanguageDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProgrammingLanguage>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
     public async Task<ActionResult<IEnumerable<ProgrammingLanguage>>> GetAll()
     {
         try
@@ -39,6 +38,29 @@ public class ProgrammingLanguageController : ControllerBase
             return Ok(output);
         }
         catch(Exception ex)
+        {
+            _logger.LogWarning(ex, "GetAll Failed.");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpGet("{programmingLanguageId}", Name = "Get")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProgrammingLanguageDto))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ProgrammingLanguage>> Get(int programmingLanguageId)
+    {
+        try
+        {
+            var programmingLanguage = (await _programmingLanguageService.Get(programmingLanguageId));
+            if(programmingLanguage is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(programmingLanguage.Adapt<ProgrammingLanguageDto>());
+        }
+        catch (Exception ex)
         {
             _logger.LogWarning(ex, "GetAll Failed.");
             return StatusCode(StatusCodes.Status500InternalServerError);
