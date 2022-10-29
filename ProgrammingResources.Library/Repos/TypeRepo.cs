@@ -4,14 +4,14 @@ using System.Data.SqlClient;
 using System.Data;
 using Dapper;
 using Type = ProgrammingResources.Library.Models.Type;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 
 namespace ProgrammingResources.Library.Services;
-public class TypeService : ITypeService
+public class TypeRepo : ITypeRepo
 {
     private readonly ProgrammingResourcesOptions _options;
 
-    public TypeService(IOptions<ProgrammingResourcesOptions> options)
+    public TypeRepo(IOptions<ProgrammingResourcesOptions> options)
     {
         _options = options.Value;
     }

@@ -1,7 +1,8 @@
 ﻿using ProgrammingResources.Library.Models;
 
-namespace ProgrammingResources.Library.Services.Interfaces;
-public interface IExampleService
+namespace ProgrammingResources.Library.Services.Repos;
+
+public interface IExampleRepo
 {
     Task Delete(int exampleId);
     Task<Example?> Get(int exampleId);

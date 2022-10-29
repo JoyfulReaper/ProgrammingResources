@@ -1,7 +1,8 @@
 ﻿using ProgrammingResources.Library.Models;
 
-namespace ProgrammingResources.Library.Services.Interfaces;
-public interface ITagService
+namespace ProgrammingResources.Library.Services.Repos;
+
+public interface ITagRepo
 {
     Task<Tag> Add(Tag tag);
     Task Delete(int tagId);

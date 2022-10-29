@@ -1,6 +1,6 @@
-﻿namespace ProgrammingResources.Library.Services.Interfaces;
+﻿namespace ProgrammingResources.Library.Services.Repos;
 
-public interface ITypeService
+public interface ITypeRepo
 {
     Task<Models.Type> Add(Models.Type type);
     Task Delete(int typeId);

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
 using ProgrammingResources.Library.Models;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 using System.Security.Claims;
 
 namespace ProgrammingResources.API.Controllers.v1;
@@ -14,10 +14,10 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class TagController : ControllerBase
 {
-    private readonly ITagService _tagService;
+    private readonly ITagRepo _tagService;
     private readonly ILogger<TagController> _logger;
 
-    public TagController(ITagService tagService,
+    public TagController(ITagRepo tagService,
         ILogger<TagController> logger)
 	{
         _tagService = tagService;

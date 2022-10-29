@@ -2,18 +2,18 @@
 using Microsoft.Extensions.Options;
 using ProgrammingResources.Library.DependencyInjection;
 using ProgrammingResources.Library.Models;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 using System.Data;
 using System.Data.SqlClient;
 
 
 namespace ProgrammingResources.Library.Services;
 
-public class ResourceService : IResourceService
+public class ResourceRepo : IResourceRepo
 {
     private readonly ProgrammingResourcesOptions _options;
 
-    public ResourceService(IOptions<ProgrammingResourcesOptions> options)
+    public ResourceRepo(IOptions<ProgrammingResourcesOptions> options)
     {
         _options = options.Value;
     }

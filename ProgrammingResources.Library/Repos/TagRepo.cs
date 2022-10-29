@@ -4,15 +4,15 @@ using Microsoft.Extensions.Options;
 using ProgrammingResources.Library.DependencyInjection;
 using Dapper;
 using ProgrammingResources.Library.Models;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 
 namespace ProgrammingResources.Library.Services;
 
-public class TagService : ITagService
+public class TagRepo : ITagRepo
 {
     private readonly ProgrammingResourcesOptions _options;
 
-    public TagService(IOptions<ProgrammingResourcesOptions> options)
+    public TagRepo(IOptions<ProgrammingResourcesOptions> options)
     {
         _options = options.Value;
     }

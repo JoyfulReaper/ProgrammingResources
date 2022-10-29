@@ -1,10 +1,8 @@
 ﻿using Mapster;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
 using ProgrammingResources.Library.Models;
-using ProgrammingResources.Library.Services;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 using System.Security.Claims;
 using Type = ProgrammingResources.Library.Models.Type;
 
@@ -16,13 +14,13 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class TypeController : ControllerBase
 {
-    private readonly ITypeService _typeService;
+    private readonly ITypeRepo _typeRepo;
     private readonly ILogger<TypeController> _logger;
 
-    public TypeController(ITypeService typeService,
+    public TypeController(ITypeRepo typeService,
         ILogger<TypeController> logger)
 	{
-        _typeService = typeService;
+        _typeRepo = typeService;
         _logger = logger;
     }
 
@@ -33,7 +31,7 @@ public class TypeController : ControllerBase
     {
         try
         {
-            var types = (await _typeService.GetAll())
+            var types = (await _typeRepo.GetAll())
                 .ToList();
             var output = new List<TypeDto>();
             types.ForEach(t => output.Add(t.Adapt<TypeDto>()));
@@ -55,7 +53,7 @@ public class TypeController : ControllerBase
     {
         try
         {
-            var type = (await _typeService.Get(typeId));
+            var type = (await _typeRepo.Get(typeId));
             if (type is null)
             {
                 return NotFound();
@@ -83,7 +81,7 @@ public class TypeController : ControllerBase
             };
 
             newType.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value; //YOLO, lol jk that catch will handle it
-            var output = await _typeService.Add(newType);
+            var output = await _typeRepo.Add(newType);
             return CreatedAtAction(nameof(Get), new { output.TypeId }, output.Adapt<TypeDto>());
         }
         catch (Exception ex)
@@ -102,7 +100,7 @@ public class TypeController : ControllerBase
         // TODO add a role that allows deleting
         try
         {
-            await _typeService.Delete(typeId);
+            await _typeRepo.Delete(typeId);
             return NoContent();
         }
         catch (Exception ex)

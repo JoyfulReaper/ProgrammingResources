@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProgrammingResources.Library.Services;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 
 namespace ProgrammingResources.Library.DependencyInjection;
 public static class AddProgrammingResouces
@@ -8,11 +8,11 @@ public static class AddProgrammingResouces
     public static IServiceCollection AddProgrammingResources(this IServiceCollection services,
         Action<ProgrammingResourcesOptions>? setupAction = null)
     {
-        services.AddTransient<IProgrammingLanguageService, ProgrammingLanguageService>();
-        services.AddTransient<ITypeService, TypeService>();
-        services.AddTransient<ITagService, TagService>();
-        services.AddTransient<IResourceService, ResourceService>();
-        services.AddTransient<IExampleService, ExampleService>();
+        services.AddTransient<IProgrammingLanguageRepo, ProgrammingLanguageRepo>();
+        services.AddTransient<ITypeRepo, TypeRepo>();
+        services.AddTransient<ITagRepo, TagRepo>();
+        services.AddTransient<IResourceRepo, ResourceRepo>();
+        services.AddTransient<IExampleRepo, ExampleRepo>();
 
         if(setupAction is not null )
         {

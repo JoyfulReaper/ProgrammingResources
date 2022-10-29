@@ -1,9 +1,8 @@
 ﻿using Mapster;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
 using ProgrammingResources.Library.Models;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 
 namespace ProgrammingResources.API.Controllers.v1;
 
@@ -13,13 +12,13 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ExampleController : ControllerBase
 {
-    private readonly IExampleService _exampleService;
+    private readonly IExampleRepo _exampleRepo;
     private readonly ILogger<ExampleController> _logger;
 
-    public ExampleController(IExampleService exampleService,
+    public ExampleController(IExampleRepo exampleRepo,
         ILogger<ExampleController> logger)
     {
-        _exampleService = exampleService;
+        _exampleRepo = exampleRepo;
         _logger = logger;
     }
 
@@ -30,7 +29,7 @@ public class ExampleController : ControllerBase
     {
         try
         {
-            var example = await _exampleService.Get(exampleId);
+            var example = await _exampleRepo.Get(exampleId);
             if (example is null)
             {
                 return NotFound();
@@ -52,7 +51,7 @@ public class ExampleController : ControllerBase
     {
         try
         {
-            var examples = (await _exampleService.GetAll(resourceId)).ToList();
+            var examples = (await _exampleRepo.GetAll(resourceId)).ToList();
             var output = new List<ExampleDto>();
             examples.ForEach(e => output.Add(e.Adapt<ExampleDto>()));
 
@@ -69,7 +68,7 @@ public class ExampleController : ControllerBase
     {
         try
         {
-            var example = await _exampleService.Save(exampleRequest.Adapt<Example>());
+            var example = await _exampleRepo.Save(exampleRequest.Adapt<Example>());
             return CreatedAtAction(nameof(GetExample), new { exampleId = example.ExampleId }, example.Adapt<ExampleDto>());
         }
         catch (Exception ex)

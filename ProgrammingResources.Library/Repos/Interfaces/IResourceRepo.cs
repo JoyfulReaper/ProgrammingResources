@@ -1,7 +1,8 @@
 ﻿using ProgrammingResources.Library.Models;
 
-namespace ProgrammingResources.Library.Services.Interfaces;
-public interface IResourceService
+namespace ProgrammingResources.Library.Services.Repos;
+
+public interface IResourceRepo
 {
     Task Delete(int resourceId);
     Task<Resource?> Get(int resourceId);

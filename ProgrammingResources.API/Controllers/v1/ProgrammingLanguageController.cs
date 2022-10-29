@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
 using ProgrammingResources.Library.Models;
-using ProgrammingResources.Library.Services.Interfaces;
+using ProgrammingResources.Library.Services.Repos;
 using System.Security.Claims;
 
 namespace ProgrammingResources.API.Controllers.v1;
@@ -14,13 +14,13 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ProgrammingLanguageController : ControllerBase
 {
-    private readonly IProgrammingLanguageService _programmingLanguageService;
+    private readonly IProgrammingLanguageRepo _programmingLanguageRepo;
     private readonly ILogger<ProgrammingLanguageController> _logger;
 
-    public ProgrammingLanguageController(IProgrammingLanguageService programmingLanguageService,
+    public ProgrammingLanguageController(IProgrammingLanguageRepo programmingLanguageService,
         ILogger<ProgrammingLanguageController> logger)
     {
-        _programmingLanguageService = programmingLanguageService;
+        _programmingLanguageRepo = programmingLanguageService;
         _logger = logger;
     }
 
@@ -31,7 +31,7 @@ public class ProgrammingLanguageController : ControllerBase
     {
         try
         {
-            var programmingLanguages = (await _programmingLanguageService.GetAll())
+            var programmingLanguages = (await _programmingLanguageRepo.GetAll())
                 .ToList();
             var output = new List<ProgrammingLanguageDto>();
             programmingLanguages.ForEach(pl => output.Add(pl.Adapt<ProgrammingLanguageDto>()));
@@ -53,7 +53,7 @@ public class ProgrammingLanguageController : ControllerBase
     {
         try
         {
-            var programmingLanguage = (await _programmingLanguageService.Get(programmingLanguageId));
+            var programmingLanguage = (await _programmingLanguageRepo.Get(programmingLanguageId));
             if (programmingLanguage is null)
             {
                 return NotFound();
@@ -81,7 +81,7 @@ public class ProgrammingLanguageController : ControllerBase
             };
 
             pl.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value; //YOLO, lol jk that catch will handle it
-            var output = await _programmingLanguageService.Add(pl);
+            var output = await _programmingLanguageRepo.Add(pl);
             return CreatedAtAction(nameof(Get), new { output.ProgrammingLanguageId }, output.Adapt<ProgrammingLanguageDto>());
         }
         catch (Exception ex)
@@ -100,7 +100,7 @@ public class ProgrammingLanguageController : ControllerBase
         // TODO add a role that allows deleting
         try
         {
-            await _programmingLanguageService.Delete(programmingLangaugeId);
+            await _programmingLanguageRepo.Delete(programmingLangaugeId);
             return NoContent();
         }
         catch (Exception ex)

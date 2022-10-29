@@ -2,14 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using ProgrammingResources.API.Identity;
 using ProgrammingResources.API.Models;
 using ProgrammingResources.API.Options;
 using ProgrammingResources.API.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace ProgrammingResources.API.Controllers.v1;
