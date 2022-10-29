@@ -2,18 +2,19 @@
 using Microsoft.Extensions.Options;
 using ProgrammingResources.Library.DependencyInjection;
 using ProgrammingResources.Library.Models;
+using ProgrammingResources.Library.Services.Interfaces;
 using System.Data;
 using System.Data.SqlClient;
 
 
 namespace ProgrammingResources.Library.Services;
 
-public class ResourceService
+public class ResourceService : IResourceService
 {
     private readonly ProgrammingResourcesOptions _options;
 
     public ResourceService(IOptions<ProgrammingResourcesOptions> options)
-	{
+    {
         _options = options.Value;
     }
 
@@ -43,7 +44,9 @@ public class ResourceService
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         var output = await connection.QuerySingleAsync<Resource>("dbo.spResource_Upsert",
-            new { 
+            new
+            {
+                ResourceId = resource.ResourceId,
                 Title = resource.Title,
                 Url = resource.Url,
                 Description = resource.Description,
