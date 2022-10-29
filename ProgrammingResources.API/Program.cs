@@ -1,5 +1,6 @@
 using ProgrammingResources.API.Options;
 using ProgrammingResources.API.ServiceSetup;
+using ProgrammingResources.Library.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,11 @@ builder.AddSwagger();
 builder.AddIdentity();
 builder.AddAuthenticationAndAuthorization();
 builder.AddCors();
+
+builder.Services.AddProgrammingResources(opts =>
+{
+    opts.ConnectionString = "ProgrammingApiData";
+});
 
 var app = builder.Build();
 

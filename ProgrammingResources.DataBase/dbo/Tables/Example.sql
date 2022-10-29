@@ -2,7 +2,7 @@
 (
 	[ExampleId] INT NOT NULL PRIMARY KEY IDENTITY, 
     [ResourceId] INT NOT NULL, 
-    [Text] NVARCHAR(4000) NOT NULL, 
+    [Text] NVARCHAR(MAX) NULL, 
     [Url] NVARCHAR(300) NULL,
     [Page] INT NULL,
     [TypeId] INT NULL,
