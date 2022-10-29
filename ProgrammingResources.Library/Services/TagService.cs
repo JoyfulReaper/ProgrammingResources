@@ -57,4 +57,31 @@ public class TagService : ITagService
             new { tagId },
             commandType: CommandType.StoredProcedure);
     }
+
+    public async Task TagResource(int tagId, int resourceId, string userId)
+    {
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+
+        await connection.ExecuteAsync("dbo.spResourceTag_Insert",
+            new
+            {
+                TagId = tagId,
+                ResourceId = resourceId,
+                UserId = userId
+            },
+            commandType: CommandType.StoredProcedure);
+    }
+
+    public async Task UntagResource(int tagId, int resourceId)
+    {
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+
+        await connection.ExecuteAsync("dbo.spResourceTag_Delete",
+            new
+            {
+                TagId = tagId,
+                ResourceId = resourceId,
+            },
+            commandType: CommandType.StoredProcedure);
+    }
 }

@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[SpExample_GetAll]
+﻿CREATE PROCEDURE [dbo].[SpExample_GetByResource]
+	@ResourceId INT
 AS
 BEGIN
 	SELECT
@@ -16,6 +17,7 @@ BEGIN
 		dbo.[Example]
 	WHERE
 		[DateDeleted] IS NULL
+	AND [ResourceId] = @ResourceId
 	ORDER BY
-		ResourceId;
+		[DateCreated] DESC;
 END

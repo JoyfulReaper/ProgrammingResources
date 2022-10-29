@@ -12,6 +12,7 @@ public static class AddProgrammingResouces
         services.AddTransient<ITypeService, TypeService>();
         services.AddTransient<ITagService, TagService>();
         services.AddTransient<IResourceService, ResourceService>();
+        services.AddTransient<IExampleService, ExampleService>();
 
         if(setupAction is not null )
         {

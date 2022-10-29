@@ -18,7 +18,6 @@ BEGIN
 			[TypeId],
 			[UserId])
 		SELECT
-			@ResourceId,
 			@Title,
 			@Url,
 			@Description,
