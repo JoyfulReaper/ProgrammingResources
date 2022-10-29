@@ -31,10 +31,9 @@ public class ProgrammingLanguageService : IProgrammingLanguageService
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        var programmingLanguage = (await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Get",
+        var programmingLanguage = (await connection.QuerySingleOrDefaultAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Get",
             new { ProgrammingLanguageId },
-            commandType: CommandType.StoredProcedure))
-            .SingleOrDefault();
+            commandType: CommandType.StoredProcedure));
 
         return programmingLanguage;
     }
@@ -43,10 +42,9 @@ public class ProgrammingLanguageService : IProgrammingLanguageService
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        ProgrammingLanguage programmingLanguage = (await connection.QueryAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Insert",
+        ProgrammingLanguage programmingLanguage = (await connection.QuerySingleAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Insert",
             new { UserId = language.UserId, Language = language.Language },
-            commandType: CommandType.StoredProcedure))
-            .Single();
+            commandType: CommandType.StoredProcedure));
 
         return programmingLanguage;
     }

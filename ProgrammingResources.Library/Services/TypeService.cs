@@ -30,10 +30,9 @@ public class TypeService : ITypeService
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        var type = (await connection.QueryAsync<Type>("dbo.spType_Get",
+        var type = await connection.QuerySingleOrDefaultAsync<Type>("dbo.spType_Get",
             new { typeId },
-            commandType: CommandType.StoredProcedure))
-            .SingleOrDefault();
+            commandType: CommandType.StoredProcedure);
 
         return type;
     }
@@ -42,10 +41,9 @@ public class TypeService : ITypeService
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        Type output = (await connection.QueryAsync<Type>("dbo.spType_Insert",
+        Type output = await connection.QuerySingleAsync<Type>("dbo.spType_Insert",
             new { UserId = type.UserId, Name = type.Name },
-            commandType: CommandType.StoredProcedure))
-            .Single();
+            commandType: CommandType.StoredProcedure);
 
         return output;
     }

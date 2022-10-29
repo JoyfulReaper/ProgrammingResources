@@ -82,6 +82,9 @@
     <Build Include="dbo\Stored Procedures\spTag_Get.sql" />
     <Build Include="dbo\Stored Procedures\spTag_Insert.sql" />
     <Build Include="dbo\Stored Procedures\spTag_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\spResource_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\spResource_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spResource_Upsert.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResources.DataBase.refactorlog" />

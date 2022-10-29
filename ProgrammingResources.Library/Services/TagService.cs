@@ -31,10 +31,9 @@ public class TagService : ITagService
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        var tag = (await connection.QueryAsync<Tag>("dbo.spTag_Get",
+        var tag = (await connection.QuerySingleOrDefaultAsync<Tag>("dbo.spTag_Get",
             new { tagId },
-            commandType: CommandType.StoredProcedure))
-            .SingleOrDefault();
+            commandType: CommandType.StoredProcedure));
 
         return tag;
     }
@@ -43,10 +42,9 @@ public class TagService : ITagService
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        Tag output = (await connection.QueryAsync<Tag>("dbo.spTag_Insert",
+        Tag output = await connection.QuerySingleAsync<Tag>("dbo.spTag_Insert",
             new { UserId = tag.UserId, Name = tag.Name },
-            commandType: CommandType.StoredProcedure))
-            .Single();
+            commandType: CommandType.StoredProcedure);
 
         return output;
     }
