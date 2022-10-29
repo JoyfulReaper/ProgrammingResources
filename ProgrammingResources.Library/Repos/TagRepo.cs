@@ -27,6 +27,17 @@ public class TagRepo : ITagRepo
         return tags;
     }
 
+    public async Task<Tag?> Get(string name)
+    {
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+
+        var tag = await connection.QuerySingleOrDefaultAsync<Tag>("dbo.spTag_GetByName",
+            new { name },
+            commandType: CommandType.StoredProcedure);
+
+        return tag;
+    }
+
     public async Task<Tag?> Get(int tagId)
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
@@ -55,6 +66,8 @@ public class TagRepo : ITagRepo
         Tag output = await connection.QuerySingleAsync<Tag>("dbo.spTag_Insert",
             new { UserId = tag.UserId, Name = tag.Name },
             commandType: CommandType.StoredProcedure);
+
+        tag.TagId = output.TagId;
 
         return output;
     }

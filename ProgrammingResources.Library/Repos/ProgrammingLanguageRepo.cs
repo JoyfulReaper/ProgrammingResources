@@ -27,13 +27,24 @@ public class ProgrammingLanguageRepo : IProgrammingLanguageRepo
         return programmingLanguages;
     }
 
+    public async Task<ProgrammingLanguage?> Get(string language)
+    {
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+
+        var lang = await connection.QuerySingleOrDefaultAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_GetByName",
+            new { language },
+            commandType: CommandType.StoredProcedure);
+
+        return lang;
+    }
+
     public async Task<ProgrammingLanguage?> Get(int ProgrammingLanguageId)
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        var programmingLanguage = (await connection.QuerySingleOrDefaultAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Get",
+        var programmingLanguage = await connection.QuerySingleOrDefaultAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Get",
             new { ProgrammingLanguageId },
-            commandType: CommandType.StoredProcedure));
+            commandType: CommandType.StoredProcedure);
 
         return programmingLanguage;
     }
@@ -45,6 +56,8 @@ public class ProgrammingLanguageRepo : IProgrammingLanguageRepo
         ProgrammingLanguage programmingLanguage = (await connection.QuerySingleAsync<ProgrammingLanguage>("dbo.spProgrammingLanguage_Insert",
             new { UserId = language.UserId, Language = language.Language },
             commandType: CommandType.StoredProcedure));
+
+        language.ProgrammingLanguageId = programmingLanguage.ProgrammingLanguageId;
 
         return programmingLanguage;
     }

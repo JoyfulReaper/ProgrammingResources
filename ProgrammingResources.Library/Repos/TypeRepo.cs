@@ -26,6 +26,17 @@ public class TypeRepo : ITypeRepo
         return types;
     }
 
+    public async Task<Type?> Get(string type)
+    {
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+
+        var output = await connection.QuerySingleOrDefaultAsync<Type>("dbo.spType_GetByName",
+            new { type },
+            commandType: CommandType.StoredProcedure);
+
+        return output;
+    }
+
     public async Task<Type?> Get(int typeId)
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
@@ -44,6 +55,8 @@ public class TypeRepo : ITypeRepo
         Type output = await connection.QuerySingleAsync<Type>("dbo.spType_Insert",
             new { UserId = type.UserId, Name = type.Name },
             commandType: CommandType.StoredProcedure);
+
+        type.TypeId = output.TypeId;
 
         return output;
     }

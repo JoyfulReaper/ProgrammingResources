@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
+using ProgrammingResources.Library.Models;
 using ProgrammingResources.Library.Services.Repos;
+using System.Security.Claims;
+using Type = ProgrammingResources.Library.Models.Type;
 
 namespace ProgrammingResources.API.Controllers.v1;
 
@@ -24,14 +27,105 @@ public class ResourceController : ControllerBase
         ITypeRepo typeRepo,
         IExampleRepo exampleRepo,
         ITagRepo tagRepo,
-		ILogger<ResourceController> logger)
-	{
+        ILogger<ResourceController> logger)
+    {
         _resourceRepo = resourceService;
         _languageRepo = languageRepo;
         _typeRepo = typeRepo;
         _exampleRepo = exampleRepo;
         _tagRepo = tagRepo;
         _logger = logger;
+    }
+
+    [HttpPost(Name = "ResourceAdd")]
+    public async Task<ActionResult<ResourceDto>> AddResource([FromBody]CreateResourceRequest resourceRequest)
+    {
+        try
+        {
+            var resource = resourceRequest.Adapt<Resource>();
+
+            // Programming Language
+            if (resourceRequest.Langauge is not null)
+            {
+                var lang = await _languageRepo.Get(resourceRequest.Langauge);
+                if (lang is null)
+                {
+                    var newLang = new ProgrammingLanguage
+                    {
+                        Language = resourceRequest.Langauge,
+                        UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
+                    };
+                    await _languageRepo.Add(newLang);
+                    resource.ProgrammingLanguageId = newLang.ProgrammingLanguageId;
+                }
+                else
+                {
+                    resource.ProgrammingLanguageId = lang.ProgrammingLanguageId;
+                }
+            }
+
+            // Type
+            if (resourceRequest.Type is not null)
+            {
+                var type = await _typeRepo.Get(resourceRequest.Type);
+                if (type is null)
+                {
+                    var newType = new Type
+                    {
+                        Name = resourceRequest.Type,
+                        UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
+                    };
+                    await _typeRepo.Add(newType);
+                    resource.TypeId = newType.TypeId;
+                }
+                else
+                {
+                    resource.TypeId = type.TypeId;
+                }
+            }
+
+            // Tags
+            foreach (var tagRequest in resourceRequest.Tags)
+            {
+                var tag = await _tagRepo.Get(tagRequest);
+                if (tag is null)
+                {
+                    var newTag = new Tag
+                    {
+                        Name = tagRequest,
+                        UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
+                    };
+                    await _tagRepo.Add(newTag);
+                }
+            }
+
+            var output = await _resourceRepo.Save(resource);
+            var outputDto = output.Adapt<ResourceDto>();
+
+            // Examples
+            foreach (var exampleRequest in resourceRequest.Examples)
+            {
+                var example = exampleRequest.Adapt<Example>();
+                example.ResourceId = output.ResourceId;
+
+                await _exampleRepo.Save(example);
+                outputDto.Examples.Add(example.Adapt<ExampleDto>());
+            }
+
+            return CreatedAtAction(nameof(Get), new { resouorceId = output.ResourceId }, outputDto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "AddResource() Failed");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpGet("{resourceId}", Name = "ResourceGet")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResourceDto))]
+    public async Task<Resource> Get(int resourceId)
+    {
+        throw new NotImplementedException();
     }
 
     [HttpGet(Name = "ResourceGetAll")]

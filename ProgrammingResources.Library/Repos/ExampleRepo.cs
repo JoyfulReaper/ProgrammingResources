@@ -56,6 +56,8 @@ public class ExampleRepo : IExampleRepo
             },
             commandType: CommandType.StoredProcedure);
 
+        example.ExampleId = output.ExampleId;
+
         return output;
     }
 

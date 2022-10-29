@@ -92,6 +92,9 @@
     <Build Include="dbo\Stored Procedures\spExample_Upsert.sql" />
     <Build Include="dbo\Stored Procedures\spResourceTag_Insert.sql" />
     <Build Include="dbo\Stored Procedures\spResourceTag_Delete.sql" />
+    <Build Include="dbo\Stored Procedures\spProgrammingLanguage_GetByName.sql" />
+    <Build Include="dbo\Stored Procedures\spType_GetByName.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_GetByName.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResources.DataBase.refactorlog" />

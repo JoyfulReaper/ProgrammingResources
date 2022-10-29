@@ -56,6 +56,8 @@ public class ResourceRepo : IResourceRepo
             },
             commandType: CommandType.StoredProcedure);
 
+        resource.ResourceId = output.ResourceId;
+
         return output;
     }
 
