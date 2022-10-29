@@ -3,7 +3,7 @@
 AS
 BEGIN
 	UPDATE dbo.[ProgrammingLanguage]
-	SET DateDeleted = GETDATE()
+	SET DateDeleted = GETUTCDATE()
 	WHERE
 		[ProgrammingLanguageId] = @ProgrammingLanguageId;
 END

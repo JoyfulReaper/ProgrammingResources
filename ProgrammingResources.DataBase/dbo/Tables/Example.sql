@@ -7,7 +7,7 @@
     [Page] INT NULL,
     [TypeId] INT NULL,
     [ProgrammingLanguageId] INT NULL,
-    [DateCreated] DATETIME2 NOT NULL DEFAULT GETDATE(), 
+    [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 
     [DateDeleted] DATETIME2 NULL, 
     [UserId] NVARCHAR(450) NOT NULL, 
     CONSTRAINT [FK_Example_Resource] FOREIGN KEY ([ResourceId]) REFERENCES [Resource]([ResourceId]), 

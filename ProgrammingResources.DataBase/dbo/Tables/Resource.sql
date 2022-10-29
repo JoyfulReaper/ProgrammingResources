@@ -6,7 +6,7 @@
     [Description] NVARCHAR(1000) NULL, 
     [ProgrammingLanguageId] INT NULL, 
     [TypeId] INT NULL,
-    [DateCreated] DATETIME2 NOT NULL DEFAULT GETDATE(), 
+    [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 
     [DateDeleted] DATETIME2 NULL, 
     [UserId] NVARCHAR(450) NOT NULL, 
     CONSTRAINT [FK_Resource_ProgrammingLanguage] FOREIGN KEY ([ProgrammingLanguageId]) REFERENCES [ProgrammingLanguage]([ProgrammingLanguageId]), 

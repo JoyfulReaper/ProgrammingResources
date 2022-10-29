@@ -78,6 +78,10 @@
     <Build Include="dbo\Stored Procedures\spType_Get.sql" />
     <Build Include="dbo\Stored Procedures\spType_Delete.sql" />
     <Build Include="dbo\Stored Procedures\spType_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_GetAll.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_Get.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_Delete.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResources.DataBase.refactorlog" />

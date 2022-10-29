@@ -3,7 +3,7 @@
 AS
 BEGIN
 	UPDATE dbo.[Type]
-	SET DateDeleted = GETDATE()
+	SET DateDeleted = GETUTCDATE()
 	WHERE
 		TypeId = @TypeId;
 END
