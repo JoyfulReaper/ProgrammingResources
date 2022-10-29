@@ -8,6 +8,6 @@ public class ResourceDto
     public string? Description { get; set; }
     public ProgrammingLanguageDto? ProgramingLanguage { get; set; }
     public TypeDto? Type { get; set; }
-    public IEnumerable<ExampleDto> Examples { get; set; } = Enumerable.Empty<ExampleDto>();
-    public IEnumerable<TagDto> Tags { get; set; } = Enumerable.Empty<TagDto>();
+    public IList<ExampleDto> Examples { get; set; } = new List<ExampleDto>();
+    public IList<TagDto> Tags { get; set; } = new List<TagDto>();
 }

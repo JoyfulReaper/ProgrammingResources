@@ -31,11 +31,21 @@ public class TagRepo : ITagRepo
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
-        var tag = (await connection.QuerySingleOrDefaultAsync<Tag>("dbo.spTag_Get",
+        var tag = await connection.QuerySingleOrDefaultAsync<Tag>("dbo.spTag_Get",
             new { tagId },
-            commandType: CommandType.StoredProcedure));
+            commandType: CommandType.StoredProcedure);
 
         return tag;
+    }
+
+    public async Task<IEnumerable<Tag>> GetByResource(int resourceId)
+    {
+        using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+        var tags = await connection.QueryAsync<Tag>("dbo.spTag_GetByResource",
+            new { resourceId },
+            commandType: CommandType.StoredProcedure);
+
+        return tags;
     }
 
     public async Task<Tag> Add(Tag tag)
