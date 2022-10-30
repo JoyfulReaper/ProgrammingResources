@@ -1,5 +1,6 @@
 using ProgrammingResources.API.Options;
 using ProgrammingResources.API.Services;
+using ProgrammingResources.API.Services.Interfaces;
 using ProgrammingResources.API.ServiceSetup;
 using ProgrammingResources.Library.DependencyInjection;
 
@@ -24,6 +25,7 @@ builder.Services.AddProgrammingResources(opts =>
 });
 
 builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IResourceService, ResourceService>();
 
 var app = builder.Build();
 

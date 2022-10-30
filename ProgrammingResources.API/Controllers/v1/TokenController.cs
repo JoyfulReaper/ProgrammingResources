@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using ProgrammingResources.API.Identity;
 using ProgrammingResources.API.Models;
 using ProgrammingResources.API.Options;
-using ProgrammingResources.API.Services;
+using ProgrammingResources.API.Services.Interfaces;
 
 namespace ProgrammingResources.API.Controllers.v1;
 

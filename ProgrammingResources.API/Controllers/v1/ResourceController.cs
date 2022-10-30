@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
+using ProgrammingResources.API.Services.Interfaces;
 using ProgrammingResources.Library.Models;
 using ProgrammingResources.Library.Services.Repos;
 using System.Security.Claims;
@@ -15,6 +16,7 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ResourceController : ControllerBase
 {
+    private readonly IResourceService _resourceService;
     private readonly IResourceRepo _resourceRepo;
     private readonly IProgrammingLanguageRepo _languageRepo;
     private readonly ITypeRepo _typeRepo;
@@ -22,14 +24,16 @@ public class ResourceController : ControllerBase
     private readonly ITagRepo _tagRepo;
     private readonly ILogger<ResourceController> _logger;
 
-    public ResourceController(IResourceRepo resourceService,
+    public ResourceController(IResourceService resourceService,
+        IResourceRepo resourceRepo,
         IProgrammingLanguageRepo languageRepo,
         ITypeRepo typeRepo,
         IExampleRepo exampleRepo,
         ITagRepo tagRepo,
         ILogger<ResourceController> logger)
     {
-        _resourceRepo = resourceService;
+        _resourceService = resourceService;
+        _resourceRepo = resourceRepo;
         _languageRepo = languageRepo;
         _typeRepo = typeRepo;
         _exampleRepo = exampleRepo;
@@ -161,9 +165,24 @@ public class ResourceController : ControllerBase
 
     [HttpGet("{resourceId}", Name = "ResourceGet")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResourceDto))]
-    public async Task<Resource> Get(int resourceId)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Resource>> Get(int resourceId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var resource = await _resourceRepo.Get(resourceId);
+            if(resource is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(await _resourceService.GetResourceDto(resource));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Get() Failed");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpGet(Name = "ResourceGetAll")]
@@ -177,28 +196,7 @@ public class ResourceController : ControllerBase
 
             foreach (var resource in allResources)
             {
-                var rDto = resource.Adapt<ResourceDto>();
-                if (resource.ProgrammingLanguageId is not null)
-                {
-                    rDto.ProgramingLanguage = (await _languageRepo.Get(resource.ProgrammingLanguageId.Value))?.Adapt<ProgrammingLanguageDto>();
-                }
-                if (resource.TypeId is not null)
-                {
-                    rDto.Type = (await _typeRepo.Get(resource.TypeId.Value))?.Adapt<TypeDto>();
-                }
-
-                var examples = await _exampleRepo.GetAll(resource.ResourceId);
-                var tags = await _tagRepo.GetByResource(resource.ResourceId);
-
-                foreach (var example in examples)
-                {
-                    rDto.Examples.Add(example.Adapt<ExampleDto>());
-                }
-                foreach (var tag in tags)
-                {
-                    rDto.Tags.Add(tag.Adapt<TagDto>());
-                }
-
+                var rDto = await _resourceService.GetResourceDto(resource);
                 output.Add(rDto);
             }
 

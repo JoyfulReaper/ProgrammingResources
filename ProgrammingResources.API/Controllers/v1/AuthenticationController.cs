@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using ProgrammingResources.API.Identity;
 using ProgrammingResources.API.Models;
 using ProgrammingResources.API.Options;
-using ProgrammingResources.API.Services;
+using ProgrammingResources.API.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
