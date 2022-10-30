@@ -25,7 +25,7 @@ builder.Services.AddProgrammingResources(opts =>
 });
 
 builder.Services.AddTransient<ITokenService, TokenService>();
-builder.Services.AddTransient<IResourceService, ResourceService>();
+builder.Services.AddTransient<IDtoService, DtoService>();
 
 var app = builder.Build();
 

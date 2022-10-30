@@ -16,27 +16,18 @@ namespace ProgrammingResources.API.Controllers.v1;
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ResourceController : ControllerBase
 {
-    private readonly IResourceService _resourceService;
+    private readonly IDtoService _dtoService;
     private readonly IResourceRepo _resourceRepo;
-    private readonly IProgrammingLanguageRepo _languageRepo;
-    private readonly ITypeRepo _typeRepo;
-    private readonly IExampleRepo _exampleRepo;
     private readonly ITagRepo _tagRepo;
     private readonly ILogger<ResourceController> _logger;
 
-    public ResourceController(IResourceService resourceService,
+    public ResourceController(IDtoService dtoService,
         IResourceRepo resourceRepo,
-        IProgrammingLanguageRepo languageRepo,
-        ITypeRepo typeRepo,
-        IExampleRepo exampleRepo,
         ITagRepo tagRepo,
         ILogger<ResourceController> logger)
     {
-        _resourceService = resourceService;
+        _dtoService = dtoService;
         _resourceRepo = resourceRepo;
-        _languageRepo = languageRepo;
-        _typeRepo = typeRepo;
-        _exampleRepo = exampleRepo;
         _tagRepo = tagRepo;
         _logger = logger;
     }
@@ -44,81 +35,53 @@ public class ResourceController : ControllerBase
     [HttpPost(Name = "ResourceAdd")]
     public async Task<ActionResult<ResourceDto>> AddResource([FromBody] CreateResourceRequest resourceRequest)
     {
-        // TODO: Clean this up, make a service and break into parts
+        // TODO: Clean this up
         // TODO: Should do this whole thing in a transaction
         try
         {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
             var resource = resourceRequest.Adapt<Resource>();
 
             // Programming Language
             ProgrammingLanguageDto? programmingLanguage = default;
             if (resourceRequest.Langauge is not null)
             {
-                var lang = await _languageRepo.Get(resourceRequest.Langauge);
-                if (lang is null)
+                programmingLanguage = await _dtoService.GetProgrammingLangugeDto(new ProgrammingLanguage
                 {
-                    var newLang = new ProgrammingLanguage
-                    {
-                        Language = resourceRequest.Langauge,
-                        UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
-                    };
-                    await _languageRepo.Add(newLang);
-                    resource.ProgrammingLanguageId = newLang.ProgrammingLanguageId;
-                    programmingLanguage = newLang.Adapt<ProgrammingLanguageDto>();
-                }
-                else
-                {
-                    resource.ProgrammingLanguageId = lang.ProgrammingLanguageId;
-                    programmingLanguage = new ProgrammingLanguageDto() { Language = resourceRequest.Langauge, ProgrammingLanguageId = lang.ProgrammingLanguageId };
-                }
+                    Language = resourceRequest.Langauge,
+                    UserId = userId
+                });
             }
 
             // Type
             TypeDto? resourceType = default;
             if (resourceRequest.Type is not null)
             {
-                var type = await _typeRepo.Get(resourceRequest.Type);
-                if (type is null)
+                resourceType = await _dtoService.GetTypeDto(new Type
                 {
-                    var newType = new Type
-                    {
-                        Name = resourceRequest.Type,
-                        UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
-                    };
-                    await _typeRepo.Add(newType);
-                    resource.TypeId = newType.TypeId;
-                    resourceType = newType.Adapt<TypeDto>();
-                }
-                else
-                {
-                    resource.TypeId = type.TypeId;
-                    resourceType = new TypeDto() { Name = resourceRequest.Type, TypeId = type.TypeId };
-                }
+                    Name = resourceRequest.Type,
+                    UserId = userId
+                });
             }
 
             // Resource
-            resource.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            resource.UserId = userId;
             var output = await _resourceRepo.Save(resource);
             var outputDto = output.Adapt<ResourceDto>();
+
             outputDto.ProgramingLanguage = programmingLanguage;
             outputDto.Type = resourceType;
-
 
             // Tags
             foreach (var tagRequest in resourceRequest.Tags)
             {
-                var tag = await _tagRepo.Get(tagRequest);
-                if (tag is null)
+                var tag = await _dtoService.GetTagDto(new Tag
                 {
-                    var newTag = new Tag
-                    {
-                        Name = tagRequest,
-                        UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
-                    };
-                    await _tagRepo.Add(newTag);
-                    tag = newTag;
-                }
-                await _tagRepo.TagResource(tag.TagId, output.ResourceId, User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value);
+                    Name = tagRequest,
+                    UserId = userId
+                });
+
+                await _tagRepo.TagResource(tag.TagId, output.ResourceId, userId);
                 outputDto.Tags.Add(tag.Adapt<TagDto>());
             }
 
@@ -127,31 +90,10 @@ public class ResourceController : ControllerBase
             {
                 var example = exampleRequest.Adapt<Example>();
                 example.ResourceId = output.ResourceId;
+                example.UserId = userId;
 
-                if (exampleRequest.Language is not null)
-                {
-                    var exampleLanguage = await _languageRepo.Get(exampleRequest.Language);
-                    if (exampleLanguage is not null)
-                    {
-                        example.ProgrammingLanguageId = exampleLanguage.ProgrammingLanguageId;
-                    }
-                    else
-                    {
-                        var newLang = new ProgrammingLanguage
-                        {
-                            Language = resourceRequest.Langauge,
-                            UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
-                        };
-                        await _languageRepo.Add(newLang);
-                        resource.ProgrammingLanguageId = newLang.ProgrammingLanguageId;
-
-                        example.ProgrammingLanguageId = newLang.ProgrammingLanguageId;
-                    }
-                }
-
-                example.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
-                await _exampleRepo.Save(example);
-                outputDto.Examples.Add(example.Adapt<ExampleDto>());
+                var exampleDto = await _dtoService.GetExampleDto(example, exampleRequest.Language);
+                outputDto.Examples.Add(exampleDto);
             }
 
             return CreatedAtAction(nameof(Get), new { resourceId = output.ResourceId }, outputDto);
@@ -171,12 +113,12 @@ public class ResourceController : ControllerBase
         try
         {
             var resource = await _resourceRepo.Get(resourceId);
-            if(resource is null)
+            if (resource is null)
             {
                 return NotFound();
             }
 
-            return Ok(await _resourceService.GetResourceDto(resource));
+            return Ok(await _dtoService.GetResourceDto(resource));
         }
         catch (Exception ex)
         {
@@ -196,7 +138,7 @@ public class ResourceController : ControllerBase
 
             foreach (var resource in allResources)
             {
-                var rDto = await _resourceService.GetResourceDto(resource);
+                var rDto = await _dtoService.GetResourceDto(resource);
                 output.Add(rDto);
             }
 
