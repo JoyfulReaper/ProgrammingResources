@@ -1,4 +1,5 @@
-﻿using ProgrammingResources.ApiClient.Models;
+﻿using ProgrammingResources.ApiClient.Interface;
+using ProgrammingResources.ApiClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace ProgrammingResources.ApiClient;
 
-public class ProgrammingLanguageEndpoint : EndpointBase
+public class ProgrammingLanguageEndpoint : EndpointBase, IProgrammingLanguageEndpoint
 {
     private readonly HttpClient _client;
 
     public ProgrammingLanguageEndpoint(HttpClient client)
-	{
+    {
         _client = client;
     }
 
@@ -33,14 +34,10 @@ public class ProgrammingLanguageEndpoint : EndpointBase
         return programmingLanguages!;
     }
 
-    public async Task<ProgrammingLanguage> Add(ProgrammingLanguage programmingLanguage)
+    public async Task Add(ProgrammingLanguage programmingLanguage)
     {
         using var response = await _client.PutAsJsonAsync("api/v1/ProgrammingLangauge", programmingLanguage);
         CheckResponse(response);
-        var pl = await response.Content.ReadFromJsonAsync<ProgrammingLanguage>();
-        ThrowIfNull(pl);
-
-        return pl!;
     }
 
     public async Task Delete(int programmingLangaugeId)

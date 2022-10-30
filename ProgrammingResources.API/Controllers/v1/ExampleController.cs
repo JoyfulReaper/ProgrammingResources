@@ -45,7 +45,7 @@ public class ExampleController : ControllerBase
     }
 
 
-    [HttpGet("{resourceId}", Name = "ExampleGetForResource")]
+    [HttpGet("resource/{resourceId}", Name = "ExampleGetForResource")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExampleDto>))]
     public async Task<ActionResult<IEnumerable<ExampleDto>>> GetExamples(int resourceId)
     {

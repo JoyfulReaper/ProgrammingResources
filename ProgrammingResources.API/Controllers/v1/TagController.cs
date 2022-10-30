@@ -95,4 +95,19 @@ public class TagController : ControllerBase
         }
     }
 
+    [HttpDelete("tagId", Name = "TagDelete")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> Delete(int tagId)
+    {
+        try
+        {
+            await _tagService.Delete(tagId);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, message: $"{nameof(Delete)}() failed");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 }

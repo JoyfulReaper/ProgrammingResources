@@ -4,9 +4,10 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using ProgrammingResources.ApiClient.Interface;
 
 namespace ProgrammingResources.ApiClient;
-public class TypeEndpoint : EndpointBase
+public class TypeEndpoint : EndpointBase, ITypeEndpoint
 {
     private readonly HttpClient _client;
 
@@ -31,14 +32,10 @@ public class TypeEndpoint : EndpointBase
         return types!;
     }
 
-    public async Task<Type> Add(Type type)
+    public async Task Add(Type type)
     {
         using var response = await _client.PutAsJsonAsync("api/v1/Type", type);
         CheckResponse(response);
-        var output = await response.Content.ReadFromJsonAsync<Type>();
-        ThrowIfNull(output);
-
-        return output!;
     }
 
     public async Task Delete(int typeId)
