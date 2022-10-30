@@ -26,12 +26,12 @@ public class TypeRepo : ITypeRepo
         return types;
     }
 
-    public async Task<Type?> Get(string type)
+    public async Task<Type?> Get(string name)
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         var output = await connection.QuerySingleOrDefaultAsync<Type>("dbo.spType_GetByName",
-            new { type },
+            new { name },
             commandType: CommandType.StoredProcedure);
 
         return output;

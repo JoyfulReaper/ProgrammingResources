@@ -40,11 +40,14 @@ public class ResourceController : ControllerBase
     [HttpPost(Name = "ResourceAdd")]
     public async Task<ActionResult<ResourceDto>> AddResource([FromBody]CreateResourceRequest resourceRequest)
     {
+        // TODO: Clean this up, make a service and break into parts
+        // TODO: Should do this whole thing in a transaction
         try
         {
             var resource = resourceRequest.Adapt<Resource>();
 
             // Programming Language
+            ProgrammingLanguageDto? programmingLanguage = default;
             if (resourceRequest.Langauge is not null)
             {
                 var lang = await _languageRepo.Get(resourceRequest.Langauge);
@@ -57,14 +60,17 @@ public class ResourceController : ControllerBase
                     };
                     await _languageRepo.Add(newLang);
                     resource.ProgrammingLanguageId = newLang.ProgrammingLanguageId;
+                    programmingLanguage = newLang.Adapt<ProgrammingLanguageDto>();
                 }
                 else
                 {
                     resource.ProgrammingLanguageId = lang.ProgrammingLanguageId;
+                    programmingLanguage = new ProgrammingLanguageDto() { Language = resourceRequest.Langauge, ProgrammingLanguageId = lang.ProgrammingLanguageId };
                 }
             }
 
             // Type
+            TypeDto? resourceType = default;
             if (resourceRequest.Type is not null)
             {
                 var type = await _typeRepo.Get(resourceRequest.Type);
@@ -77,12 +83,22 @@ public class ResourceController : ControllerBase
                     };
                     await _typeRepo.Add(newType);
                     resource.TypeId = newType.TypeId;
+                    resourceType = newType.Adapt<TypeDto>();
                 }
                 else
                 {
                     resource.TypeId = type.TypeId;
+                    resourceType = new TypeDto() { Name = resourceRequest.Type, TypeId = type.TypeId };
                 }
             }
+
+            // Resource
+            resource.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+            var output = await _resourceRepo.Save(resource);
+            var outputDto = output.Adapt<ResourceDto>();
+            outputDto.ProgramingLanguage = programmingLanguage;
+            outputDto.Type = resourceType;
+
 
             // Tags
             foreach (var tagRequest in resourceRequest.Tags)
@@ -96,11 +112,11 @@ public class ResourceController : ControllerBase
                         UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
                     };
                     await _tagRepo.Add(newTag);
+                    tag = newTag;
                 }
+                await _tagRepo.TagResource(tag.TagId, output.ResourceId, User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value);
+                outputDto.Tags.Add(tag.Adapt<TagDto>());
             }
-
-            var output = await _resourceRepo.Save(resource);
-            var outputDto = output.Adapt<ResourceDto>();
 
             // Examples
             foreach (var exampleRequest in resourceRequest.Examples)
@@ -108,11 +124,34 @@ public class ResourceController : ControllerBase
                 var example = exampleRequest.Adapt<Example>();
                 example.ResourceId = output.ResourceId;
 
+                if(exampleRequest.Language is not null)
+                {
+                    var exampleLanguage = await _languageRepo.Get(exampleRequest.Language);
+                    if(exampleLanguage is not null)
+                    {
+                        example.ProgrammingLanguageId = exampleLanguage.ProgrammingLanguageId;
+                    }
+                    else
+                    {
+                        var newLang = new ProgrammingLanguage
+                        {
+                            Language = resourceRequest.Langauge,
+                            UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value,
+                        };
+                        await _languageRepo.Add(newLang);
+                        resource.ProgrammingLanguageId = newLang.ProgrammingLanguageId;
+
+                        example.ProgrammingLanguageId = newLang.ProgrammingLanguageId;
+                    }
+                }
+
+                example.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
                 await _exampleRepo.Save(example);
                 outputDto.Examples.Add(example.Adapt<ExampleDto>());
             }
 
-            return CreatedAtAction(nameof(Get), new { resouorceId = output.ResourceId }, outputDto);
+            //return CreatedAtAction(nameof(Get), new { resouorceId = output.ResourceId }, outputDto);
+            return Ok(outputDto);
         }
         catch (Exception ex)
         {

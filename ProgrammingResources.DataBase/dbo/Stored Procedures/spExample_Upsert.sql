@@ -45,6 +45,8 @@ BEGIN
 		WHERE
 			ExampleId = @ExampleId;
 	END
+	ELSE
+		SET @ExampleId = SCOPE_IDENTITY();
 
 	SELECT
 		[ExampleId],
