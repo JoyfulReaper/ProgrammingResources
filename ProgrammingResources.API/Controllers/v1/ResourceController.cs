@@ -38,7 +38,7 @@ public class ResourceController : ControllerBase
     }
 
     [HttpPost(Name = "ResourceAdd")]
-    public async Task<ActionResult<ResourceDto>> AddResource([FromBody]CreateResourceRequest resourceRequest)
+    public async Task<ActionResult<ResourceDto>> AddResource([FromBody] CreateResourceRequest resourceRequest)
     {
         // TODO: Clean this up, make a service and break into parts
         // TODO: Should do this whole thing in a transaction
@@ -124,10 +124,10 @@ public class ResourceController : ControllerBase
                 var example = exampleRequest.Adapt<Example>();
                 example.ResourceId = output.ResourceId;
 
-                if(exampleRequest.Language is not null)
+                if (exampleRequest.Language is not null)
                 {
                     var exampleLanguage = await _languageRepo.Get(exampleRequest.Language);
-                    if(exampleLanguage is not null)
+                    if (exampleLanguage is not null)
                     {
                         example.ProgrammingLanguageId = exampleLanguage.ProgrammingLanguageId;
                     }
@@ -150,8 +150,7 @@ public class ResourceController : ControllerBase
                 outputDto.Examples.Add(example.Adapt<ExampleDto>());
             }
 
-            //return CreatedAtAction(nameof(Get), new { resouorceId = output.ResourceId }, outputDto);
-            return Ok(outputDto);
+            return CreatedAtAction(nameof(Get), new { resourceId = output.ResourceId }, outputDto);
         }
         catch (Exception ex)
         {
@@ -199,6 +198,8 @@ public class ResourceController : ControllerBase
                 {
                     rDto.Tags.Add(tag.Adapt<TagDto>());
                 }
+
+                output.Add(rDto);
             }
 
             return Ok(output);

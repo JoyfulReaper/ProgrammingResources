@@ -95,6 +95,7 @@
     <Build Include="dbo\Stored Procedures\spProgrammingLanguage_GetByName.sql" />
     <Build Include="dbo\Stored Procedures\spType_GetByName.sql" />
     <Build Include="dbo\Stored Procedures\spTag_GetByName.sql" />
+    <Build Include="dbo\Stored Procedures\spTag_GetByResource.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProgrammingResources.DataBase.refactorlog" />

@@ -16,12 +16,12 @@ public class ExampleRepo : IExampleRepo
         _options = options.Value;
     }
 
-    public async Task<IEnumerable<Example>> GetAll(int resrouceId)
+    public async Task<IEnumerable<Example>> GetAll(int resourceId)
     {
         using IDbConnection connection = new SqlConnection(_options.ConnectionString);
 
         var examples = await connection.QueryAsync<Example>("dbo.spExample_GetByResource",
-            new { resrouceId },
+            new { resourceId },
             commandType: CommandType.StoredProcedure);
 
         return examples;
