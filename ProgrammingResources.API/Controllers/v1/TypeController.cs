@@ -68,13 +68,19 @@ public class TypeController : ControllerBase
         }
     }
 
-    [HttpPost(Name = "TypeInsert")]
+    [HttpPut(Name = "TypeAdd")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Type))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ProgrammingLanguage>> Insert(string type)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ProgrammingLanguage>> AddType(string type)
     {
         try
         {
+            if((await _typeRepo.Get(type) is not null))
+            {
+                return BadRequest("Type exists");
+            }
+
             var newType = new Type()
             {
                 Name = type

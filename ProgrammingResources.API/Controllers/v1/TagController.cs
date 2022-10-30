@@ -45,13 +45,25 @@ public class TagController : ControllerBase
         }
     }
 
-    [HttpPut(Name = "TagInsert")]
+    /// <summary>
+    /// Add a new tag
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns>Bad Request if the tag already exists</returns>
+    [HttpPut(Name = "TagAdd")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TagDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<TagDto>> Insert(string name)
+    public async Task<ActionResult<TagDto>> AddTag(string name)
     {
         try
         {
+            var tag = await _tagService.Get(name);
+            if (tag is not null)
+            {
+                return BadRequest("Tag Exists");
+            }
+
             var output = (await _tagService.Add(new Tag
             {
                 Name = name,
@@ -62,7 +74,23 @@ public class TagController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Insert failed");
+            _logger.LogWarning(ex, message: $"{nameof(AddTag)}() failed");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("tagResource", Name = "TagResource")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> TagResource([FromBody]TagResourceRequest tagResourceRequest)
+    {
+        try
+        {
+            await _tagService.TagResource(tagResourceRequest.TagId, tagResourceRequest.ResourceId, User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, message: $"{nameof(TagResource)}() failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

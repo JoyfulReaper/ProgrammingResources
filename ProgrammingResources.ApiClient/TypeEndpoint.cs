@@ -33,7 +33,7 @@ public class TypeEndpoint : EndpointBase
 
     public async Task<Type> Add(Type type)
     {
-        using var response = await _client.PostAsJsonAsync("api/v1/Type", type);
+        using var response = await _client.PutAsJsonAsync("api/v1/Type", type);
         CheckResponse(response);
         var output = await response.Content.ReadFromJsonAsync<Type>();
         ThrowIfNull(output);

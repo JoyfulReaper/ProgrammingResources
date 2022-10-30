@@ -35,7 +35,7 @@ public class ProgrammingLanguageEndpoint : EndpointBase
 
     public async Task<ProgrammingLanguage> Add(ProgrammingLanguage programmingLanguage)
     {
-        using var response = await _client.PostAsJsonAsync("api/v1/ProgrammingLangauge", programmingLanguage);
+        using var response = await _client.PutAsJsonAsync("api/v1/ProgrammingLangauge", programmingLanguage);
         CheckResponse(response);
         var pl = await response.Content.ReadFromJsonAsync<ProgrammingLanguage>();
         ThrowIfNull(pl);

@@ -68,13 +68,19 @@ public class ProgrammingLanguageController : ControllerBase
         }
     }
 
-    [HttpPost (Name="ProgrammingLanguageInsert")]
+    [HttpPut (Name="ProgrammingLanguageAdd")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProgrammingLanguageDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ProgrammingLanguage>> Insert(string programmingLanguage)
+    public async Task<ActionResult<ProgrammingLanguage>> AddLangauge(string programmingLanguage)
     {
         try
         {
+            if((await _programmingLanguageRepo.Get(programmingLanguage)) is not null)
+            {
+                return BadRequest();
+            }
+
             var pl = new ProgrammingLanguage()
             {
                 Language = programmingLanguage
