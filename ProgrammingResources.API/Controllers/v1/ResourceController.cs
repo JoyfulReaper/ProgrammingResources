@@ -94,7 +94,7 @@ public class ResourceController : ControllerBase
             foreach (var tag in resourceRequest.Tags)
             {
                 var tagDb = await _dtoService.GetOrAddTag(tag, userId);
-                await _tagRepo.TagResource(resource.ResourceId, tagDb.TagId, userId);
+                await _tagRepo.TagResource(tagDb.TagId, resource.ResourceId, userId);
                 output.Tags.Add(tagDb.Name);
             }
 
@@ -112,6 +112,7 @@ public class ResourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Resource>> Get(int resourceId)
     {
+        // TODO Get langauge and type for resource and example
         try
         {
             var resource = await _resourceRepo.Get(resourceId);
@@ -120,8 +121,41 @@ public class ResourceController : ControllerBase
                 return NotFound();
             }
 
-            throw new NotImplementedException();
+            var rDto = resource.Adapt<ResourceDto>();
 
+            if (resource.ProgrammingLanguageId is not null)
+            {
+                var language = await _languageRepo.Get(resource.ProgrammingLanguageId.Value);
+                rDto.Langauge = language?.Language;
+            }
+
+            if(resource.TypeId is not null)
+            {
+                var type = await _typeRepo.Get(resource.TypeId.Value);
+                rDto.Type = type?.Name;
+            }
+
+            var tags = (await _tagRepo.GetByResource(resourceId)).ToList();
+            tags.ForEach(t => rDto.Tags.Add(t.Name));
+
+            var examples = (await _exampleRepo.GetAll(resourceId)).ToList();
+            foreach (var example in examples)
+            {
+                var eDto = example.Adapt<ExampleDto>();
+                if (example.ProgrammingLanguageId is not null)
+                {
+                    var language = await _languageRepo.Get(example.ProgrammingLanguageId.Value);
+                    eDto.Language = language?.Language;
+                }
+
+                if (example.TypeId is not null)
+                {
+                    var type = await _typeRepo.Get(example.TypeId.Value);
+                    eDto.Type = type?.Name;
+                }
+                rDto.Examples.Add(eDto);
+            }
+                return Ok(rDto);
         }
         catch (Exception ex)
         {
