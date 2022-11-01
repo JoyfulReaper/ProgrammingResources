@@ -6,7 +6,6 @@ using ProgrammingResources.API.Services;
 using ProgrammingResources.Library.Models;
 using ProgrammingResources.Library.Services.Repos;
 using System.Security.Claims;
-using Type = ProgrammingResources.Library.Models.Type;
 
 namespace ProgrammingResources.API.Controllers.v1;
 
@@ -19,24 +18,18 @@ public class ResourceController : ControllerBase
     private readonly IDtoService _dtoService;
     private readonly IResourceRepo _resourceRepo;
     private readonly ITagRepo _tagRepo;
-    private readonly IProgrammingLanguageRepo _languageRepo;
-    private readonly ITypeRepo _typeRepo;
     private readonly IExampleRepo _exampleRepo;
     private readonly ILogger<ResourceController> _logger;
 
     public ResourceController(IDtoService dtoService,
         IResourceRepo resourceRepo,
         ITagRepo tagRepo,
-        IProgrammingLanguageRepo languageRepo,
-        ITypeRepo typeRepo,
         IExampleRepo exampleRepo,
         ILogger<ResourceController> logger)
     {
         _dtoService = dtoService;
         _resourceRepo = resourceRepo;
         _tagRepo = tagRepo;
-        _languageRepo = languageRepo;
-        _typeRepo = typeRepo;
         _exampleRepo = exampleRepo;
         _logger = logger;
     }
@@ -112,50 +105,15 @@ public class ResourceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Resource>> Get(int resourceId)
     {
-        // TODO Get langauge and type for resource and example
         try
         {
-            var resource = await _resourceRepo.Get(resourceId);
-            if (resource is null)
+            var output = await _dtoService.GetResouorceDto(resourceId);
+            if (output is null)
             {
                 return NotFound();
             }
 
-            var rDto = resource.Adapt<ResourceDto>();
-
-            if (resource.ProgrammingLanguageId is not null)
-            {
-                var language = await _languageRepo.Get(resource.ProgrammingLanguageId.Value);
-                rDto.Langauge = language?.Language;
-            }
-
-            if(resource.TypeId is not null)
-            {
-                var type = await _typeRepo.Get(resource.TypeId.Value);
-                rDto.Type = type?.Name;
-            }
-
-            var tags = (await _tagRepo.GetByResource(resourceId)).ToList();
-            tags.ForEach(t => rDto.Tags.Add(t.Name));
-
-            var examples = (await _exampleRepo.GetAll(resourceId)).ToList();
-            foreach (var example in examples)
-            {
-                var eDto = example.Adapt<ExampleDto>();
-                if (example.ProgrammingLanguageId is not null)
-                {
-                    var language = await _languageRepo.Get(example.ProgrammingLanguageId.Value);
-                    eDto.Language = language?.Language;
-                }
-
-                if (example.TypeId is not null)
-                {
-                    var type = await _typeRepo.Get(example.TypeId.Value);
-                    eDto.Type = type?.Name;
-                }
-                rDto.Examples.Add(eDto);
-            }
-                return Ok(rDto);
+            return Ok(output);
         }
         catch (Exception ex)
         {
@@ -171,8 +129,10 @@ public class ResourceController : ControllerBase
         try
         {
             var output = new List<ResourceDto>();
-            var allResources = await _resourceRepo.GetAll();
+            var allResources = (await _resourceRepo.GetAll())
+                .ToList();
 
+            allResources.ForEach(async r => output.Add(await _dtoService.GetResouorceDto(r.ResourceId) ?? throw new Exception($"Failed to get ResourceDto for resource id: {r.ResourceId}")));
 
             return Ok(output);
         }

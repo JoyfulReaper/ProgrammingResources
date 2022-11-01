@@ -45,34 +45,11 @@ public class TypeController : ControllerBase
         }
     }
 
-    //[HttpGet("{typeId}", Name = "TypeGet")]
-    //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TypeDto))]
-    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public async Task<ActionResult<ProgrammingLanguage>> Get(int typeId)
-    //{
-    //    try
-    //    {
-    //        var type = (await _typeRepo.Get(typeId));
-    //        if (type is null)
-    //        {
-    //            return NotFound();
-    //        }
-
-    //        return Ok(type.Adapt<TypeDto>());
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogWarning(ex, "Get Failed.");
-    //        return StatusCode(StatusCodes.Status500InternalServerError);
-    //    }
-    //}
-
     [HttpPut(Name = "TypeAdd")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Type))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ProgrammingLanguage>> AddType(string type)
+    public async Task<ActionResult<ProgrammingLanguage>> AddType([FromBody] string type)
     {
         try
         {

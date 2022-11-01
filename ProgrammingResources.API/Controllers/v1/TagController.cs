@@ -54,7 +54,7 @@ public class TagController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<string>> AddTag(string name)
+    public async Task<ActionResult<string>> AddTag([FromBody]string name)
     {
         try
         {

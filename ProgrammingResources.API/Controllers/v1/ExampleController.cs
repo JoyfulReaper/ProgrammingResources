@@ -25,7 +25,7 @@ public class ExampleController : ControllerBase
     [HttpGet("{exampleId}", Name = "ExampleGet")]
     [ProducesResponseType(StatusCodes.Status200OK, Type= typeof(ExampleDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ExampleDto>> GetExample(int exampleId)
+    public async Task<ActionResult<ExampleDto>> GetExample([FromRoute]int exampleId)
     {
         try
         {
@@ -39,7 +39,7 @@ public class ExampleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "GetExample() failed");
+            _logger.LogWarning(ex, $"{nameof(GetExample)}() failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -47,7 +47,7 @@ public class ExampleController : ControllerBase
 
     [HttpGet("resource/{resourceId}", Name = "ExampleGetForResource")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ExampleDto>))]
-    public async Task<ActionResult<IEnumerable<ExampleDto>>> GetExamples(int resourceId)
+    public async Task<ActionResult<IEnumerable<ExampleDto>>> GetExamples([FromRoute]int resourceId)
     {
         try
         {
@@ -58,13 +58,14 @@ public class ExampleController : ControllerBase
             return Ok(output);
         } catch (Exception ex)
         {
-            _logger.LogWarning(ex, "GetExamples() Failed");
+            _logger.LogWarning(ex, $"{nameof(GetExamples)}() Failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 
-    [HttpPost(Name = "AddExample")]
-    public async Task<ActionResult<ExampleDto>> AddExample(CreateExampleRequest exampleRequest)
+    [HttpPost(Name = "ExampleAdd")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ExampleDto))]
+    public async Task<ActionResult<ExampleDto>> AddExample([FromBody]CreateExampleRequest exampleRequest)
     {
         try
         {
@@ -73,7 +74,24 @@ public class ExampleController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "AddExample() Failed");
+            _logger.LogWarning(ex, $"{nameof(AddExample)}() Failed");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpDelete("{exampleId}",Name = "ExampleDelete")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteExample([FromRoute]int exampleId)
+    {
+        // TODO: Role for deleting
+        try
+        {
+            await _exampleRepo.Delete(exampleId);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, $"{nameof(DeleteExample)}() Failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

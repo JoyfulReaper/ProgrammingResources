@@ -3,8 +3,7 @@
 namespace ProgrammingResources.ApiClient.Interface;
 public interface IProgrammingLanguageEndpoint
 {
-    Task Add(ProgrammingLanguage programmingLanguage);
+    Task Add(string programmingLanguage);
     Task Delete(int programmingLangaugeId);
-    Task<ProgrammingLanguage> Get(int programmingLanguageId);
-    Task<IEnumerable<ProgrammingLanguage>> GetAll();
+    Task<IEnumerable<string>> GetAll();
 }

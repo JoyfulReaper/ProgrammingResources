@@ -18,31 +18,23 @@ public class ProgrammingLanguageEndpoint : EndpointBase, IProgrammingLanguageEnd
         _client = client;
     }
 
-    public async Task<ProgrammingLanguage> Get(int programmingLanguageId)
+    public async Task<IEnumerable<string>> GetAll()
     {
-        var programmingLangauge = await _client.GetFromJsonAsync<ProgrammingLanguage>($"api/v1/ProgrammingLanguage/{programmingLanguageId}");
-        ThrowIfNull(programmingLangauge);
-
-        return programmingLangauge!;
-    }
-
-    public async Task<IEnumerable<ProgrammingLanguage>> GetAll()
-    {
-        var programmingLanguages = await _client.GetFromJsonAsync<IEnumerable<ProgrammingLanguage>>($"api/v1/ProgrammingLanguage");
+        var programmingLanguages = await _client.GetFromJsonAsync<IEnumerable<string>>($"api/v1/ProgrammingLanguage");
         ThrowIfNull(programmingLanguages);
 
         return programmingLanguages!;
     }
 
-    public async Task Add(ProgrammingLanguage programmingLanguage)
+    public async Task Add(string programmingLanguage)
     {
-        using var response = await _client.PutAsJsonAsync("api/v1/ProgrammingLangauge", programmingLanguage);
+        using var response = await _client.PutAsJsonAsync($"api/v1/ProgrammingLangauge", programmingLanguage);
         CheckResponse(response);
     }
 
     public async Task Delete(int programmingLangaugeId)
     {
-        using var response = await _client.DeleteAsync($"api/v2/ProgrammingLangauge/{programmingLangaugeId}");
+        using var response = await _client.DeleteAsync($"api/v1/ProgrammingLangauge/{programmingLangaugeId}");
         CheckResponse(response);
     }
 }

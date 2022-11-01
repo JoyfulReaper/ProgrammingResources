@@ -1,7 +1,5 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ProgrammingResources.API.DTOs;
 using ProgrammingResources.Library.Models;
 using ProgrammingResources.Library.Services.Repos;
 using System.Security.Claims;
@@ -45,34 +43,11 @@ public class ProgrammingLanguageController : ControllerBase
         }
     }
 
-    //[HttpGet("{programmingLanguageId}", Name = "ProgrammingLanguageGet")]
-    //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public async Task<ActionResult<ProgrammingLanguage>> Get(int programmingLanguageId)
-    //{
-    //    try
-    //    {
-    //        var programmingLanguage = (await _programmingLanguageRepo.Get(programmingLanguageId));
-    //        if (programmingLanguage is null)
-    //        {
-    //            return NotFound();
-    //        }
-
-    //        return Ok(programmingLanguage.Language);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogWarning(ex, "Get Failed.");
-    //        return StatusCode(StatusCodes.Status500InternalServerError);
-    //    }
-    //}
-
-    [HttpPut (Name="ProgrammingLanguageAdd")]
+    [HttpPut(Name="ProgrammingLanguageAdd")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ProgrammingLanguage>> AddLangauge(string programmingLanguage)
+    public async Task<ActionResult<ProgrammingLanguage>> AddLangauge([FromBody]string programmingLanguage)
     {
         try
         {
@@ -102,7 +77,7 @@ public class ProgrammingLanguageController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Delete(string programmingLangauge)
+    public async Task<IActionResult> Delete([FromRoute]string programmingLangauge)
     {
         // TODO add a role that allows deleting
         try

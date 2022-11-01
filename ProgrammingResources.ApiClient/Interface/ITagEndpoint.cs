@@ -3,9 +3,8 @@
 namespace ProgrammingResources.ApiClient.Interface;
 public interface ITagEndpoint
 {
-    Task Add(Tag type);
-    Task Delete(int tagId);
-    Task<Tag> Get(int tagId);
-    Task<IEnumerable<Tag>> GetAll();
+    Task Add(string tag);
+    Task Delete(string tag);
+    Task<IEnumerable<string>> GetAll();
     Task TagResource(int tagId, int resourceId);
 }

@@ -16,7 +16,7 @@ public static class AddApiClient
         services.AddTransient<IProgrammingLanguageEndpoint, ProgrammingLanguageEndpoint>();
         services.AddTransient<ITagEndpoint, TagEndpoint>();
         services.AddTransient<ITypeEndpoint, TypeEndpoint>();
-        //services.AddTransient<IResourceEndpoing, ResourceEndpoint>();
+        //services.AddTransient<IResourceEndpoint, ResourceEndpoint>();
 
         return services;
     }

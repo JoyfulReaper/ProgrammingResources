@@ -18,31 +18,23 @@ public class TagEndpoint : EndpointBase, ITagEndpoint
         _client = client;
     }
 
-    public async Task<Tag> Get(int tagId)
+    public async Task<IEnumerable<string>> GetAll()
     {
-        var tag = await _client.GetFromJsonAsync<Tag>($"api/v1/Tag/{tagId}");
-        ThrowIfNull(tag);
-
-        return tag!;
-    }
-
-    public async Task<IEnumerable<Tag>> GetAll()
-    {
-        var tags = await _client.GetFromJsonAsync<IEnumerable<Tag>>($"api/v1/Tag");
+        var tags = await _client.GetFromJsonAsync<IEnumerable<string>>($"api/v1/Tag");
         ThrowIfNull(tags);
 
         return tags!;
     }
 
-    public async Task Add(Tag type)
+    public async Task Add(string tag)
     {
-        using var response = await _client.PutAsJsonAsync("api/v1/Tag", type);
+        using var response = await _client.PutAsJsonAsync($"api/v1/Tag", tag);
         CheckResponse(response);
     }
 
-    public async Task Delete(int tagId)
+    public async Task Delete(string tag)
     {
-        using var response = await _client.DeleteAsync($"api/v1/Tag/{tagId}");
+        using var response = await _client.DeleteAsync($"api/v1/Tag/{tag}");
         CheckResponse(response);
     }
 

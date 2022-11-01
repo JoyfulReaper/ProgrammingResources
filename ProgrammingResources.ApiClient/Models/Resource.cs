@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace ProgrammingResources.ApiClient.Models;
 public class Resource
 {
+    public int ResourceId { get; set; }
     public string Title { get; set; } = default!;
     public string? Url { get; set; }
     public string? Description { get; set; }

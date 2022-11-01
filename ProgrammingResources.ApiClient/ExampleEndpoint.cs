@@ -1,5 +1,6 @@
 ﻿
 
+using ProgrammingResources.ApiClient.Interface;
 using ProgrammingResources.ApiClient.Models;
 using System.Net.Http.Json;
 
@@ -21,7 +22,7 @@ public class ExampleEndpoint : EndpointBase, IExampleEndpoint
         return example!;
     }
 
-    public async Task<IEnumerable<Example>> GetExamples(int resourceId)
+    public async Task<IEnumerable<Example>> GetForResource(int resourceId)
     {
         var examples = await _client.GetFromJsonAsync<IEnumerable<Example>>($"api/v1/Example/resource/{resourceId}");
         ThrowIfNull(examples);
@@ -29,7 +30,7 @@ public class ExampleEndpoint : EndpointBase, IExampleEndpoint
         return examples!;
     }
 
-    public async Task<Example> AddExample(Example example)
+    public async Task<Example> Add(Example example)
     {
         using var response = await _client.PostAsJsonAsync($"api/v1/Example", example);
         CheckResponse(response);
@@ -38,5 +39,11 @@ public class ExampleEndpoint : EndpointBase, IExampleEndpoint
         ThrowIfNull(output);
 
         return output!;
+    }
+
+    public async Task Delete(int exampleId)
+    {
+        using var response = await _client.DeleteAsync($"api/v1/Example/{exampleId}");
+        CheckResponse(response);
     }
 }
