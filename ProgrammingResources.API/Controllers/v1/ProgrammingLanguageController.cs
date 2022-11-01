@@ -25,16 +25,16 @@ public class ProgrammingLanguageController : ControllerBase
     }
 
     [HttpGet(Name = "ProgrammingLanguageGetAll")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProgrammingLanguage>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<ProgrammingLanguage>>> GetAll()
+    public async Task<ActionResult<IEnumerable<string>>> GetAll()
     {
         try
         {
             var programmingLanguages = (await _programmingLanguageRepo.GetAll())
                 .ToList();
-            var output = new List<ProgrammingLanguageDto>();
-            programmingLanguages.ForEach(pl => output.Add(pl.Adapt<ProgrammingLanguageDto>()));
+            var output = new List<string>();
+            programmingLanguages.ForEach(pl => output.Add(pl.Language));
 
             return Ok(output);
         }
@@ -45,31 +45,31 @@ public class ProgrammingLanguageController : ControllerBase
         }
     }
 
-    [HttpGet("{programmingLanguageId}", Name = "ProgrammingLanguageGet")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProgrammingLanguageDto))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProgrammingLanguage>> Get(int programmingLanguageId)
-    {
-        try
-        {
-            var programmingLanguage = (await _programmingLanguageRepo.Get(programmingLanguageId));
-            if (programmingLanguage is null)
-            {
-                return NotFound();
-            }
+    //[HttpGet("{programmingLanguageId}", Name = "ProgrammingLanguageGet")]
+    //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    //[ProducesResponseType(StatusCodes.Status404NotFound)]
+    //public async Task<ActionResult<ProgrammingLanguage>> Get(int programmingLanguageId)
+    //{
+    //    try
+    //    {
+    //        var programmingLanguage = (await _programmingLanguageRepo.Get(programmingLanguageId));
+    //        if (programmingLanguage is null)
+    //        {
+    //            return NotFound();
+    //        }
 
-            return Ok(programmingLanguage.Adapt<ProgrammingLanguageDto>());
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Get Failed.");
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
+    //        return Ok(programmingLanguage.Language);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogWarning(ex, "Get Failed.");
+    //        return StatusCode(StatusCodes.Status500InternalServerError);
+    //    }
+    //}
 
     [HttpPut (Name="ProgrammingLanguageAdd")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProgrammingLanguageDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<ProgrammingLanguage>> AddLangauge(string programmingLanguage)
@@ -78,7 +78,7 @@ public class ProgrammingLanguageController : ControllerBase
         {
             if((await _programmingLanguageRepo.Get(programmingLanguage)) is not null)
             {
-                return BadRequest();
+                return BadRequest("Programming langauge exists");
             }
 
             var pl = new ProgrammingLanguage()
@@ -86,27 +86,34 @@ public class ProgrammingLanguageController : ControllerBase
                 Language = programmingLanguage
             };
 
-            pl.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value; //YOLO, lol jk that catch will handle it
+            pl.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
             var output = await _programmingLanguageRepo.Add(pl);
-            return CreatedAtAction(nameof(Get), new { output.ProgrammingLanguageId }, output.Adapt<ProgrammingLanguageDto>());
+            return Ok(output);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Insert Failed.");
+            _logger.LogWarning(ex, $"{nameof(AddLangauge)}() Failed.");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
     }
 
-    [HttpDelete (Name = "ProgrammingLanguageDelete")]
+    [HttpDelete ("{programmingLangauge}", Name = "ProgrammingLanguageDelete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Delete(int programmingLangaugeId)
+    public async Task<IActionResult> Delete(string programmingLangauge)
     {
         // TODO add a role that allows deleting
         try
         {
-            await _programmingLanguageRepo.Delete(programmingLangaugeId);
+            var pl = await _programmingLanguageRepo.Get(programmingLangauge);
+            if(pl is null)
+            {
+                return NotFound();
+            }
+
+            await _programmingLanguageRepo.Delete(pl.ProgrammingLanguageId);
             return NoContent();
         }
         catch (Exception ex)

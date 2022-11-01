@@ -19,13 +19,13 @@ public class TagController : ControllerBase
 
     public TagController(ITagRepo tagService,
         ILogger<TagController> logger)
-	{
+    {
         _tagService = tagService;
         _logger = logger;
     }
 
     [HttpGet(Name = "TagGetAll")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TagDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<Tag>>> GetAll()
     {
@@ -33,14 +33,14 @@ public class TagController : ControllerBase
         {
             var tags = (await _tagService.GetAll())
                 .ToList();
-            var output = new List<TagDto>();
-            tags.ForEach(t => output.Add(t.Adapt<TagDto>()));
+            var output = new List<string>();
+            tags.ForEach(t => output.Add(t.Name));
 
             return Ok(output);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "GetAll failed");
+            _logger.LogWarning(ex, $"{nameof(GetAll)}() failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -51,10 +51,10 @@ public class TagController : ControllerBase
     /// <param name="name"></param>
     /// <returns>Bad Request if the tag already exists</returns>
     [HttpPut(Name = "TagAdd")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TagDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<TagDto>> AddTag(string name)
+    public async Task<ActionResult<string>> AddTag(string name)
     {
         try
         {
@@ -68,9 +68,9 @@ public class TagController : ControllerBase
             {
                 Name = name,
                 UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value
-            })).Adapt<TagDto>();
+            }));
 
-            return output;
+            return output.Name;
         }
         catch (Exception ex)
         {
@@ -81,7 +81,7 @@ public class TagController : ControllerBase
 
     [HttpPut("tagResource", Name = "TagResource")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult> TagResource([FromBody]TagResourceRequest tagResourceRequest)
+    public async Task<ActionResult> TagResource([FromBody] TagResourceRequest tagResourceRequest)
     {
         try
         {
@@ -95,13 +95,19 @@ public class TagController : ControllerBase
         }
     }
 
-    [HttpDelete("tagId", Name = "TagDelete")]
+    [HttpDelete("{tag}", Name = "TagDelete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<ActionResult> Delete(int tagId)
+    public async Task<ActionResult> Delete(string tag)
     {
         try
         {
-            await _tagService.Delete(tagId);
+            var tagDb = await _tagService.Get(tag);
+            if(tagDb is null)
+            {
+                return NotFound();
+            }
+
+            await _tagService.Delete(tagDb.TagId);
             return NoContent();
         }
         catch (Exception ex)

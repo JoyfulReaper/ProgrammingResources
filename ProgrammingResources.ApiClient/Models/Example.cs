@@ -8,5 +8,5 @@ public class Example
     public string? Url { get; set; }
     public int? Page { get; set; }
     public int? TypeId { get; set; }
-    public int? ProgrammingLanguageId { get; set; }
+    public string? Langauge { get; set; }
 }

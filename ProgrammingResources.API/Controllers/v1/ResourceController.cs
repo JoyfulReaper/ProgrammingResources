@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
-using ProgrammingResources.API.Services.Interfaces;
+using ProgrammingResources.API.Services;
 using ProgrammingResources.Library.Models;
 using ProgrammingResources.Library.Services.Repos;
 using System.Security.Claims;
@@ -19,16 +19,25 @@ public class ResourceController : ControllerBase
     private readonly IDtoService _dtoService;
     private readonly IResourceRepo _resourceRepo;
     private readonly ITagRepo _tagRepo;
+    private readonly IProgrammingLanguageRepo _languageRepo;
+    private readonly ITypeRepo _typeRepo;
+    private readonly IExampleRepo _exampleRepo;
     private readonly ILogger<ResourceController> _logger;
 
     public ResourceController(IDtoService dtoService,
         IResourceRepo resourceRepo,
         ITagRepo tagRepo,
+        IProgrammingLanguageRepo languageRepo,
+        ITypeRepo typeRepo,
+        IExampleRepo exampleRepo,
         ILogger<ResourceController> logger)
     {
         _dtoService = dtoService;
         _resourceRepo = resourceRepo;
         _tagRepo = tagRepo;
+        _languageRepo = languageRepo;
+        _typeRepo = typeRepo;
+        _exampleRepo = exampleRepo;
         _logger = logger;
     }
 
@@ -42,65 +51,57 @@ public class ResourceController : ControllerBase
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
             var resource = resourceRequest.Adapt<Resource>();
 
-            // Programming Language
-            ProgrammingLanguageDto? programmingLanguage = default;
-            if (resourceRequest.Langauge is not null)
+            var output = resource.Adapt<ResourceDto>();
+
+            if(resourceRequest.Langauge is not null)
             {
-                programmingLanguage = await _dtoService.GetProgrammingLangugeDto(new ProgrammingLanguage
-                {
-                    Language = resourceRequest.Langauge,
-                    UserId = userId
-                });
+                var pl = await _dtoService.GetOrAddLanguage(resourceRequest.Langauge, userId);
+                resource.ProgrammingLanguageId = pl.ProgrammingLanguageId;
+                output.Langauge = pl.Language;
             }
 
-            // Type
-            TypeDto? resourceType = default;
-            if (resourceRequest.Type is not null)
+            if(resourceRequest.Type is not null)
             {
-                resourceType = await _dtoService.GetTypeDto(new Type
-                {
-                    Name = resourceRequest.Type,
-                    UserId = userId
-                });
+                var type = await _dtoService.GetOrAddType(resourceRequest.Type, userId);
+                resource.TypeId = type.TypeId;
+                output.Type = type.Name;
             }
 
-            // Resource
             resource.UserId = userId;
-            var output = await _resourceRepo.Save(resource);
-            var outputDto = output.Adapt<ResourceDto>();
+            await _resourceRepo.Save(resource);
+            output.ResourceId = resource.ResourceId;
 
-            outputDto.ProgramingLanguage = programmingLanguage;
-            outputDto.Type = resourceType;
+            //foreach(var example in resourceRequest.Examples)
+            //{
+            //    var newExample = new Example
+            //    {
+            //        ResourceId = resource.ResourceId,
+            //        Text = example.Text,
+            //        Url = example.Url,
+            //        Page = example.Page,
+            //        TypeId = example.Type == null ? null : (await _dtoService.GetOrAddType(example.Type, userId)).TypeId,
+            //        ProgrammingLanguageId = example.Language == null ? null : (await _dtoService.GetOrAddLanguage(example.Language, userId)).ProgrammingLanguageId,
+            //    };
 
-            // Tags
-            foreach (var tagRequest in resourceRequest.Tags)
+            //    await _exampleRepo.Save(newExample);
+
+            //    var outExample = newExample.Adapt<ExampleDto>();
+            //    outExample.Language = example.Language;
+            //    output.Examples.Add(outExample);
+            //}
+
+            foreach(var tag in resourceRequest.Tags)
             {
-                var tag = await _dtoService.GetTagDto(new Tag
-                {
-                    Name = tagRequest,
-                    UserId = userId
-                });
-
-                await _tagRepo.TagResource(tag.TagId, output.ResourceId, userId);
-                outputDto.Tags.Add(tag.Adapt<TagDto>());
+                var tagDb = await _dtoService.GetOrAddTag(tag, userId);
+                await _tagRepo.TagResource(resource.ResourceId, tagDb.TagId, userId);
+                output.Tags.Add(tagDb.Name);
             }
 
-            // Examples
-            foreach (var exampleRequest in resourceRequest.Examples)
-            {
-                var example = exampleRequest.Adapt<Example>();
-                example.ResourceId = output.ResourceId;
-                example.UserId = userId;
-
-                var exampleDto = await _dtoService.GetExampleDto(example, exampleRequest.Language);
-                outputDto.Examples.Add(exampleDto);
-            }
-
-            return CreatedAtAction(nameof(Get), new { resourceId = output.ResourceId }, outputDto);
+            return CreatedAtAction(nameof(Get), new { resourceId = resource.ResourceId }, output);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "AddResource() Failed");
+            _logger.LogWarning(ex, $"{nameof(AddResource)}() Failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -118,11 +119,12 @@ public class ResourceController : ControllerBase
                 return NotFound();
             }
 
-            return Ok(await _dtoService.GetResourceDto(resource));
+            throw new NotImplementedException();
+
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Get() Failed");
+            _logger.LogWarning(ex, $"{nameof(Get)}() Failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -136,17 +138,12 @@ public class ResourceController : ControllerBase
             var output = new List<ResourceDto>();
             var allResources = await _resourceRepo.GetAll();
 
-            foreach (var resource in allResources)
-            {
-                var rDto = await _dtoService.GetResourceDto(resource);
-                output.Add(rDto);
-            }
 
             return Ok(output);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "GetAllResources() Failed");
+            _logger.LogWarning(ex, $"{nameof(GetAllResources)}() Failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

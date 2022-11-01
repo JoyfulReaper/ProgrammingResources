@@ -6,6 +6,6 @@ public class CreateExampleRequest
     public string? Text { get; set; }
     public string? Url { get; set; }
     public int? Page { get; set; }
-    public int? TypeId { get; set; }
-    public int? ProgrammingLanguageId { get; set; }
+    public string? Type { get; set; }
+    public string? Language { get; set; }
 }

@@ -27,14 +27,14 @@ public class TypeController : ControllerBase
     [HttpGet(Name = "TypeGetAll")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Type>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<Type>>> GetAll()
+    public async Task<ActionResult<IEnumerable<string>>> GetAll()
     {
         try
         {
             var types = (await _typeRepo.GetAll())
                 .ToList();
-            var output = new List<TypeDto>();
-            types.ForEach(t => output.Add(t.Adapt<TypeDto>()));
+            var output = new List<string>();
+            types.ForEach(t => output.Add(t.Name));
 
             return Ok(output);
         }
@@ -45,28 +45,28 @@ public class TypeController : ControllerBase
         }
     }
 
-    [HttpGet("{typeId}", Name = "TypeGet")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TypeDto))]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProgrammingLanguage>> Get(int typeId)
-    {
-        try
-        {
-            var type = (await _typeRepo.Get(typeId));
-            if (type is null)
-            {
-                return NotFound();
-            }
+    //[HttpGet("{typeId}", Name = "TypeGet")]
+    //[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TypeDto))]
+    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    //[ProducesResponseType(StatusCodes.Status404NotFound)]
+    //public async Task<ActionResult<ProgrammingLanguage>> Get(int typeId)
+    //{
+    //    try
+    //    {
+    //        var type = (await _typeRepo.Get(typeId));
+    //        if (type is null)
+    //        {
+    //            return NotFound();
+    //        }
 
-            return Ok(type.Adapt<TypeDto>());
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Get Failed.");
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-    }
+    //        return Ok(type.Adapt<TypeDto>());
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogWarning(ex, "Get Failed.");
+    //        return StatusCode(StatusCodes.Status500InternalServerError);
+    //    }
+    //}
 
     [HttpPut(Name = "TypeAdd")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Type))]
@@ -88,7 +88,8 @@ public class TypeController : ControllerBase
 
             newType.UserId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value; //YOLO, lol jk that catch will handle it
             var output = await _typeRepo.Add(newType);
-            return CreatedAtAction(nameof(Get), new { output.TypeId }, output.Adapt<TypeDto>());
+
+            return Ok(output.Name);
         }
         catch (Exception ex)
         {
@@ -98,15 +99,21 @@ public class TypeController : ControllerBase
 
     }
 
-    [HttpDelete(Name = "TypeDelete")]
+    [HttpDelete("{type}", Name = "TypeDelete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Delete(int typeId)
+    public async Task<IActionResult> Delete([FromRoute] string type)
     {
         // TODO add a role that allows deleting
         try
         {
-            await _typeRepo.Delete(typeId);
+            var typeDb = await _typeRepo.Get(type);
+            if(typeDb is null)
+            {
+                return NotFound();
+            }
+
+            await _typeRepo.Delete(typeDb.TypeId);
             return NoContent();
         }
         catch (Exception ex)

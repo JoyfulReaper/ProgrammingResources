@@ -6,8 +6,8 @@ public class ResourceDto
     public string Title { get; set; } = default!;
     public string? Url { get; set; }
     public string? Description { get; set; }
-    public ProgrammingLanguageDto? ProgramingLanguage { get; set; }
-    public TypeDto? Type { get; set; }
+    public string? Langauge { get; set; }
+    public string? Type { get; set; }
     public IList<ExampleDto> Examples { get; set; } = new List<ExampleDto>();
-    public IList<TagDto> Tags { get; set; } = new List<TagDto>();
+    public IList<string> Tags { get; set; } = new List<string>();
 }
