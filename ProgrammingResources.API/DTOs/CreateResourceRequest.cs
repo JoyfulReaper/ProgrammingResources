@@ -8,5 +8,5 @@ public class CreateResourceRequest
     public string? Langauge { get; set; }
     public string? Type { get; set; }
     public IList<string> Tags { get; set; } = new List<string>();
+    public IList<ResourceCreateExampleDto> Examples {get; set;} = new List<ResourceCreateExampleDto>();
 }
-

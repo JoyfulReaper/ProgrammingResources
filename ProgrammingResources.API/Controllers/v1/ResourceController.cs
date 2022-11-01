@@ -71,26 +71,27 @@ public class ResourceController : ControllerBase
             await _resourceRepo.Save(resource);
             output.ResourceId = resource.ResourceId;
 
-            //foreach(var example in resourceRequest.Examples)
-            //{
-            //    var newExample = new Example
-            //    {
-            //        ResourceId = resource.ResourceId,
-            //        Text = example.Text,
-            //        Url = example.Url,
-            //        Page = example.Page,
-            //        TypeId = example.Type == null ? null : (await _dtoService.GetOrAddType(example.Type, userId)).TypeId,
-            //        ProgrammingLanguageId = example.Language == null ? null : (await _dtoService.GetOrAddLanguage(example.Language, userId)).ProgrammingLanguageId,
-            //    };
+            foreach (var example in resourceRequest.Examples)
+            {
+                var newExample = new Example
+                {
+                    UserId = userId,
+                    ResourceId = resource.ResourceId,
+                    Text = example.Text,
+                    Url = example.Url,
+                    Page = example.Page,
+                    TypeId = example.Type == null ? null : (await _dtoService.GetOrAddType(example.Type, userId)).TypeId,
+                    ProgrammingLanguageId = example.Language == null ? null : (await _dtoService.GetOrAddLanguage(example.Language, userId)).ProgrammingLanguageId,
+                };
 
-            //    await _exampleRepo.Save(newExample);
+                await _exampleRepo.Save(newExample);
 
-            //    var outExample = newExample.Adapt<ExampleDto>();
-            //    outExample.Language = example.Language;
-            //    output.Examples.Add(outExample);
-            //}
+                var outExample = newExample.Adapt<ExampleDto>();
+                outExample.Language = example.Language;
+                output.Examples.Add(outExample);
+            }
 
-            foreach(var tag in resourceRequest.Tags)
+            foreach (var tag in resourceRequest.Tags)
             {
                 var tagDb = await _dtoService.GetOrAddTag(tag, userId);
                 await _tagRepo.TagResource(resource.ResourceId, tagDb.TagId, userId);
