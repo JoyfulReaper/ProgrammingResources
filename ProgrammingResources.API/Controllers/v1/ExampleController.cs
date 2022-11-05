@@ -1,8 +1,10 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using ProgrammingResources.API.DTOs;
+using ProgrammingResources.API.Services;
 using ProgrammingResources.Library.Models;
 using ProgrammingResources.Library.Services.Repos;
+using System.Security.Claims;
 
 namespace ProgrammingResources.API.Controllers.v1;
 
@@ -13,21 +15,57 @@ namespace ProgrammingResources.API.Controllers.v1;
 public class ExampleController : ControllerBase
 {
     private readonly IExampleRepo _exampleRepo;
+    private readonly IDtoService _dtoService;
+    private readonly ITypeRepo _typeRepo;
+    private readonly IProgrammingLanguageRepo _languageRepo;
     private readonly ILogger<ExampleController> _logger;
 
     public ExampleController(IExampleRepo exampleRepo,
+        IDtoService dtoService,
+        ITypeRepo typeRepo,
+        IProgrammingLanguageRepo languageRepo,
         ILogger<ExampleController> logger)
     {
         _exampleRepo = exampleRepo;
+        _dtoService = dtoService;
+        _typeRepo = typeRepo;
+        _languageRepo = languageRepo;
         _logger = logger;
     }
 
     [HttpPut(Name = "ExampleUpdate")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task UpdateExample(Example example)
+    public async Task<IActionResult> UpdateExample(ExampleDto example)
     {
+        try
+        {
+            var exampleDb = await _exampleRepo.Get(example.ExampleId);
+            if (exampleDb is null)
+            {
+                return NotFound();
+            }
 
+            exampleDb.Text = example.Text;
+            exampleDb.Url = example.Url;
+            exampleDb.Page = example.Page;
+
+            if (example.Language is not null)
+            {
+                exampleDb.ProgrammingLanguageId = (await _dtoService.GetOrAddLanguage(example.Language, GetUserId())).ProgrammingLanguageId;
+            }
+            if (example.Type is not null)
+            {
+                exampleDb.TypeId = (await _dtoService.GetOrAddType(example.Type, GetUserId())).TypeId;
+            }
+
+            return NoContent();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogWarning(ex, $"{nameof(GetExample)}() failed");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpGet("{exampleId}", Name = "ExampleGet")]
@@ -43,7 +81,11 @@ public class ExampleController : ControllerBase
                 return NotFound();
             }
 
-            return Ok(example.Adapt<ExampleDto>());
+            var output = example.Adapt<ExampleDto>();
+
+            await _dtoService.AddLangugeAndType(example, output);
+
+            return Ok(output);
         }
         catch (Exception ex)
         {
@@ -61,7 +103,13 @@ public class ExampleController : ControllerBase
         {
             var examples = (await _exampleRepo.GetAll(resourceId)).ToList();
             var output = new List<ExampleDto>();
-            examples.ForEach(e => output.Add(e.Adapt<ExampleDto>()));
+
+            foreach (var example in examples)
+            {
+                var outDto = example.Adapt<ExampleDto>();
+                await _dtoService.AddLangugeAndType(example, outDto);
+                output.Add(outDto);
+            }
 
             return Ok(output);
         } catch (Exception ex)
@@ -77,8 +125,20 @@ public class ExampleController : ControllerBase
     {
         try
         {
-            var example = await _exampleRepo.Save(exampleRequest.Adapt<Example>());
-            return CreatedAtAction(nameof(GetExample), new { exampleId = example.ExampleId }, example.Adapt<ExampleDto>());
+            var newExample = exampleRequest.Adapt<Example>();
+            newExample.UserId = GetUserId();
+
+            if(exampleRequest.Language is not null)
+            {
+                newExample.ProgrammingLanguageId = (await _dtoService.GetOrAddLanguage(exampleRequest.Language, GetUserId())).ProgrammingLanguageId;
+            }
+            if(exampleRequest.Type is not null)
+            {
+                newExample.TypeId = (await _dtoService.GetOrAddType(exampleRequest.Type, GetUserId())).TypeId;
+            }
+
+            var output = await _exampleRepo.Save(newExample);
+            return CreatedAtAction(nameof(GetExample), new { exampleId = output.ExampleId }, output.Adapt<ExampleDto>());
         }
         catch (Exception ex)
         {
@@ -102,5 +162,10 @@ public class ExampleController : ControllerBase
             _logger.LogWarning(ex, $"{nameof(DeleteExample)}() Failed");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+
+    private string GetUserId()
+    {
+        return User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
     }
 }

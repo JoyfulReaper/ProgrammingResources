@@ -117,4 +117,17 @@ public class DtoService : IDtoService
 
         return tagDb;
     }
+
+    public async Task AddLangugeAndType(Example example, ExampleDto exampleDto)
+    {
+        if (example.ProgrammingLanguageId.HasValue)
+        {
+            exampleDto.Language = (await _languageRepo.Get(example.ProgrammingLanguageId.Value))?.Language;
+        }
+
+        if (example.TypeId.HasValue)
+        {
+            exampleDto.Type = (await _typeRepo.Get(example.TypeId.Value))?.Name;
+        }
+    }
 }
