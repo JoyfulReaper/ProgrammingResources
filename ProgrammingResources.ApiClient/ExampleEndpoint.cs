@@ -14,6 +14,12 @@ public class ExampleEndpoint : EndpointBase, IExampleEndpoint
         _client = client;
     }
 
+    public async Task Update(Example example)
+    {
+        using var response = await _client.PutAsJsonAsync($"api/v1/Example", example);
+        CheckResponse(response);
+    }
+
     public async Task<Example> Get(int exampleId)
     {
         var example = await _client.GetFromJsonAsync<Example>($"api/v1/Example/{exampleId}");
@@ -22,7 +28,7 @@ public class ExampleEndpoint : EndpointBase, IExampleEndpoint
         return example!;
     }
 
-    public async Task<IEnumerable<Example>> GetForResource(int resourceId)
+    public async Task<IEnumerable<Example>> GetByResource(int resourceId)
     {
         var examples = await _client.GetFromJsonAsync<IEnumerable<Example>>($"api/v1/Example/resource/{resourceId}");
         ThrowIfNull(examples);
