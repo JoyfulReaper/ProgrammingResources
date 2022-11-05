@@ -2,8 +2,7 @@
 
 public interface ITypeEndpoint
 {
-    Task Add(Type type);
-    Task Delete(int typeId);
-    Task<Type> Get(int typeId);
+    Task Add(string type);
+    Task Delete(string type);
     Task<IEnumerable<Type>> GetAll();
 }

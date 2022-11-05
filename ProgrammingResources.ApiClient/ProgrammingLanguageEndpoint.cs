@@ -32,9 +32,9 @@ public class ProgrammingLanguageEndpoint : EndpointBase, IProgrammingLanguageEnd
         CheckResponse(response);
     }
 
-    public async Task Delete(int programmingLangaugeId)
+    public async Task Delete(string programmingLangauge)
     {
-        using var response = await _client.DeleteAsync($"api/v1/ProgrammingLangauge/{programmingLangaugeId}");
+        using var response = await _client.DeleteAsync($"api/v1/ProgrammingLangauge/{programmingLangauge}");
         CheckResponse(response);
     }
 }

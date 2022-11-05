@@ -22,6 +22,14 @@ public class ExampleController : ControllerBase
         _logger = logger;
     }
 
+    [HttpPut(Name = "ExampleUpdate")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task UpdateExample(Example example)
+    {
+
+    }
+
     [HttpGet("{exampleId}", Name = "ExampleGet")]
     [ProducesResponseType(StatusCodes.Status200OK, Type= typeof(ExampleDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -16,14 +16,6 @@ public class TypeEndpoint : EndpointBase, ITypeEndpoint
         _client = client;
     }
 
-    public async Task<Type> Get(int typeId)
-    {
-        var type = await _client.GetFromJsonAsync<Type>($"api/v1/Type/{typeId}");
-        ThrowIfNull(type);
-
-        return type!;
-    }
-
     public async Task<IEnumerable<Type>> GetAll()
     {
         var types = await _client.GetFromJsonAsync<IEnumerable<Type>>($"api/v1/Type");
@@ -32,15 +24,15 @@ public class TypeEndpoint : EndpointBase, ITypeEndpoint
         return types!;
     }
 
-    public async Task Add(Type type)
+    public async Task Add(string type)
     {
         using var response = await _client.PutAsJsonAsync("api/v1/Type", type);
         CheckResponse(response);
     }
 
-    public async Task Delete(int typeId)
+    public async Task Delete(string type)
     {
-        using var response = await _client.DeleteAsync($"api/v2/Type/{typeId}");
+        using var response = await _client.DeleteAsync($"api/v2/Type/{type}");
         CheckResponse(response);
     }
 }
